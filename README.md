@@ -6,4 +6,4 @@
 
 This repository is a collection of DB fields and utilities for Django.
 
-Documentation: https://thelabnyc.gitlab.io/thelab-db
+Documentation: [https://thelabnyc.gitlab.io/thelab-db](https://thelabnyc.gitlab.io/thelab-db)
