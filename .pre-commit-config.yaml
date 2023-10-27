@@ -7,6 +7,7 @@ repos:
       - id: check-symlinks
       - id: check-toml
       - id: check-yaml
+        exclude: '^(mkdocs|\.gitlab\-ci)\.yml$'
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
@@ -15,7 +16,6 @@ repos:
     hooks:
       - id: black
         types: [file, python]
-        exclude: '^packages/thelab-ui-python/thelabui/tests/.*/snapshots/snap_.*\.py'
 
   - repo: https://github.com/pycqa/isort
     rev: "5.12.0"
