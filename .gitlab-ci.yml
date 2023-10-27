@@ -139,6 +139,12 @@ release:pkg:
     - pip install twine
     # Build package
     - poetry build
+    # Publish to PyPI
+    - export TWINE_USERNAME=__token__
+    - export TWINE_PASSWORD=${PYPI_TOKEN}
+    - python -m twine upload
+        --repository-url https://upload.pypi.org/legacy/
+        dist/*
     # Publish to Gitlab's package registry
     - export TWINE_USERNAME=gitlab-ci-token
     - export TWINE_PASSWORD=${CI_JOB_TOKEN}
