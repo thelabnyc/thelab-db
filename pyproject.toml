@@ -4,6 +4,10 @@ version = "0.0.1-a1"
 description = "Django DB Utilities"
 authors = ["thelabnyc <thelabdev@thelabnyc.com>"]
 license = "ISC"
+readme = "README.md"
+homepage = "https://gitlab.com/thelabnyc/thelab-db"
+repository = "https://gitlab.com/thelabnyc/thelab-db"
+documentation = "https://thelabnyc.gitlab.io/thelab-db"
 packages = [
     { include = "thelabdb" },
 ]

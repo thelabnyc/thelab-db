@@ -5,3 +5,5 @@
 [![coverage report](https://gitlab.com/thelabnyc/thelab-db/badges/master/coverage.svg)](https://gitlab.com/thelabnyc/thelab-db/-/commits/master)
 
 This repository is a collection of DB fields and utilities for Django.
+
+Documentation: https://thelabnyc.gitlab.io/thelab-db
