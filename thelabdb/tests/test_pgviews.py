@@ -6,7 +6,8 @@ from django.db import connection
 from django.db.models import signals
 from django.dispatch import receiver
 from django.test import TestCase
-from thelabdb.pgviews.signals import view_synced, all_views_synced
+
+from thelabdb.pgviews.signals import all_views_synced, view_synced
 
 from . import models
 

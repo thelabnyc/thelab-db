@@ -1,17 +1,15 @@
 from django.db import connections
 from django.db.models.sql import query
-
 from django_pgviews.db.sql import compiler
 
 
 class NonQuotingQuery(query.Query):
-    """Query class that uses the NonQuotingCompiler.
-    """
+    """Query class that uses the NonQuotingCompiler."""
+
     def get_compiler(self, using=None, connection=None):
-        """Get the NonQuotingCompiler object.
-        """
+        """Get the NonQuotingCompiler object."""
         if using is None and connection is None:
-            raise ValueError('Need either using or connection')
+            raise ValueError("Need either using or connection")
         if using:
             connection = connections[using]
 

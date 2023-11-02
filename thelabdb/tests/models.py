@@ -1,7 +1,7 @@
 from django.db import models
 
-from thelabdb.pgviews import view
 import thelabdb.fields
+from thelabdb.pgviews import view
 
 
 class EncryptedText(models.Model):
