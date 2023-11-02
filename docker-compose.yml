@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
+
+  test:
+    build: .
+    depends_on:
+      - postgres
+    volumes:
+      - .:/code
+    environment:
+      DJANGO_SETTINGS_MODULE: thelabdb.tests.settings.pg

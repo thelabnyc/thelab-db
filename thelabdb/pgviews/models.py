@@ -2,10 +2,11 @@ import logging
 
 from django.apps import apps
 from django.db import connection
-from django_pgviews.signals import all_views_synced, view_synced
-from django_pgviews.view import MaterializedView, View, create_view
 
-log = logging.getLogger("django_pgviews.sync_pgviews")
+from .signals import all_views_synced, view_synced
+from .view import MaterializedView, View, create_view
+
+logger = logging.getLogger(__name__)
 
 
 class ViewSyncer(object):
@@ -26,7 +27,7 @@ class ViewSyncer(object):
             backlog = self.run_backlog(backlog, force, update)
 
         if loop >= 10:
-            log.warn(
+            logger.warn(
                 "pgviews dependencies hit limit. Check if your model dependencies are correct"
             )
         else:
@@ -49,7 +50,7 @@ class ViewSyncer(object):
                     skip = True
             if skip is True:
                 backlog.append(view_cls)
-                log.info("Putting pgview at back of queue: %s", name)
+                logger.info("Putting pgview at back of queue: %s", name)
                 continue  # Skip
 
             try:
@@ -87,7 +88,7 @@ class ViewSyncer(object):
                     msg = (
                         "exists with incompatible schema, " "--force required to update"
                     )
-                log.info(
+                logger.info(
                     "pgview %(python_name)s %(msg)s" % {"python_name": name, "msg": msg}
                 )
         return backlog

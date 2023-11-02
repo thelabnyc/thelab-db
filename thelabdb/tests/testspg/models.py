@@ -1,35 +1,6 @@
 from django.db import models
 
-import thelabdb.fields
 from thelabdb.pgviews import view
-
-
-class EncryptedText(models.Model):
-    value = thelabdb.fields.EncryptedTextField()
-
-
-class EncryptedChar(models.Model):
-    value = thelabdb.fields.EncryptedCharField(max_length=25)
-
-
-class EncryptedEmail(models.Model):
-    value = thelabdb.fields.EncryptedEmailField()
-
-
-class EncryptedInt(models.Model):
-    value = thelabdb.fields.EncryptedIntegerField()
-
-
-class EncryptedDate(models.Model):
-    value = thelabdb.fields.EncryptedDateField()
-
-
-class EncryptedDateTime(models.Model):
-    value = thelabdb.fields.EncryptedDateTimeField()
-
-
-class EncryptedNullable(models.Model):
-    value = thelabdb.fields.EncryptedIntegerField(null=True)
 
 
 class TestModel(models.Model):
@@ -57,33 +28,33 @@ class SimpleUser(view.View):
 
 
 class RelatedView(view.ReadOnlyView):
-    sql = """SELECT id AS model_id, id FROM viewtest_testmodel"""
+    sql = """SELECT id AS model_id, id FROM {}""".format(TestModel._meta.db_table)
     model = models.ForeignKey(TestModel, on_delete=models.CASCADE)
 
 
 class MaterializedRelatedView(view.ReadOnlyMaterializedView):
-    sql = """SELECT id AS model_id, id FROM viewtest_testmodel"""
+    sql = """SELECT id AS model_id, id FROM {}""".format(TestModel._meta.db_table)
     model = models.ForeignKey(TestModel, on_delete=models.DO_NOTHING)
 
 
 class DependantView(view.ReadOnlyView):
-    dependencies = ("viewtest.RelatedView",)
-    sql = """SELECT model_id from viewtest_relatedview;"""
+    dependencies = ("testspg.RelatedView",)
+    sql = """SELECT model_id from {};""".format(RelatedView._meta.db_table)
 
 
 class DependantMaterializedView(view.ReadOnlyMaterializedView):
-    dependencies = ("viewtest.MaterializedRelatedView",)
-    sql = """SELECT model_id from viewtest_materializedrelatedview;"""
+    dependencies = ("testspg.MaterializedRelatedView",)
+    sql = """SELECT model_id from {};""".format(MaterializedRelatedView._meta.db_table)
 
 
 class MaterializedRelatedViewWithIndex(view.ReadOnlyMaterializedView):
     concurrent_index = "id"
-    sql = """SELECT id AS model_id, id FROM viewtest_testmodel"""
+    sql = """SELECT id AS model_id, id FROM {}""".format(TestModel._meta.db_table)
     model = models.ForeignKey(TestModel, on_delete=models.DO_NOTHING)
 
 
 class CustomSchemaView(view.ReadOnlyView):
-    sql = """SELECT id AS model_id, id FROM viewtest_testmodel"""
+    sql = """SELECT id AS model_id, id FROM {}""".format(TestModel._meta.db_table)
     model = models.ForeignKey(TestModel, on_delete=models.DO_NOTHING)
 
     class Meta:

@@ -2,17 +2,16 @@
 """
 import collections
 import copy
-import logging
 import re
 
 import django
 import psycopg2
-import six
 from django.apps import apps
 from django.core import exceptions
 from django.db import connection, models, transaction
 from django.db.models.query import QuerySet
-from django_pgviews.db import get_fields_by_name
+
+from .db import get_fields_by_name
 
 FIELD_SPEC_REGEX = (
     r"^([A-Za-z_][A-Za-z0-9_]*)\."
@@ -20,8 +19,6 @@ FIELD_SPEC_REGEX = (
     r"(\*|(?:[A-Za-z_][A-Za-z0-9_]*))$"
 )
 FIELD_SPEC_RE = re.compile(FIELD_SPEC_REGEX)
-
-log = logging.getLogger("django_pgviews.view")
 
 
 def hasfield(model_cls, field_name):
@@ -170,7 +167,7 @@ def clear_view(connection, view_name, materialized=False):
             cursor.execute("DROP VIEW IF EXISTS {0} CASCADE".format(view_name))
     finally:
         cursor_wrapper.close()
-    return "DROPPED".format(view=view_name)
+    return "DROPPED"
 
 
 class ViewMeta(models.base.ModelBase):
@@ -186,7 +183,7 @@ class ViewMeta(models.base.ModelBase):
         for field_name in projection:
             if isinstance(field_name, models.Field):
                 attrs[field_name.name] = copy.copy(field_name)
-            elif isinstance(field_name, six.string_types):
+            elif isinstance(field_name, str):
                 match = FIELD_SPEC_RE.match(field_name)
                 if not match:
                     raise TypeError("Unrecognized field specifier: %r" % field_name)
@@ -223,7 +220,7 @@ else:
     BaseManagerMeta = object
 
 
-class View(six.with_metaclass(ViewMeta, models.Model)):
+class View(models.Model, metaclass=ViewMeta):
     """Helper for exposing Postgres views as Django models."""
 
     _deferred = False

@@ -15,6 +15,7 @@ from . import models
 @receiver(signals.post_migrate)
 def create_test_schema(sender, app_config, **kwargs):
     command = "CREATE SCHEMA IF NOT EXISTS {};".format("test_schema")
+    print(f"\n\n{command}\n\n")
     with connection.cursor() as cursor:
         cursor.execute(command)
 
@@ -27,7 +28,7 @@ class ViewTestCase(TestCase):
         with closing(connection.cursor()) as cur:
             cur.execute(
                 """SELECT COUNT(*) FROM pg_views
-                        WHERE viewname LIKE 'viewtest_%';"""
+                        WHERE viewname LIKE 'testspg_%';"""
             )
 
             (count,) = cur.fetchone()
@@ -35,7 +36,7 @@ class ViewTestCase(TestCase):
 
             cur.execute(
                 """SELECT COUNT(*) FROM pg_matviews
-                        WHERE matviewname LIKE 'viewtest_%';"""
+                        WHERE matviewname LIKE 'testspg_%';"""
             )
 
             (count,) = cur.fetchone()
@@ -55,7 +56,7 @@ class ViewTestCase(TestCase):
         with closing(connection.cursor()) as cur:
             cur.execute(
                 """SELECT COUNT(*) FROM pg_views
-                        WHERE viewname LIKE 'viewtest_%';"""
+                        WHERE viewname LIKE 'testspg_%';"""
             )
 
             (count,) = cur.fetchone()
@@ -175,71 +176,71 @@ class DependantViewTestCase(TestCase):
     def test_sync_depending_views(self):
         """Test the sync_pgviews command for views that depend on other views.
 
-        This test drops `viewtest_dependantview` and its dependencies
+        This test drops `testspg_dependantview` and its dependencies
         and recreates them manually, thereby simulating an old state
         of the views in the db before changes to the view model's sql is made.
         Then we sync the views again and verify that everything was updated.
         """
 
         with closing(connection.cursor()) as cur:
-            cur.execute("DROP VIEW viewtest_relatedview CASCADE;")
+            cur.execute("DROP VIEW testspg_relatedview CASCADE;")
 
             cur.execute(
-                """CREATE VIEW viewtest_relatedview as
-                SELECT id AS model_id, name FROM viewtest_testmodel;"""
+                """CREATE VIEW testspg_relatedview as
+                SELECT id AS model_id, name FROM testspg_testmodel;"""
             )
 
             cur.execute(
-                """CREATE VIEW viewtest_dependantview as
-                        SELECT name from viewtest_relatedview;"""
+                """CREATE VIEW testspg_dependantview as
+                        SELECT name from testspg_relatedview;"""
             )
 
-            cur.execute("""SELECT name from viewtest_relatedview;""")
-            cur.execute("""SELECT name from viewtest_dependantview;""")
+            cur.execute("""SELECT name from testspg_relatedview;""")
+            cur.execute("""SELECT name from testspg_dependantview;""")
 
         call_command("sync_pgviews", "--force")
 
         with closing(connection.cursor()) as cur:
             cur.execute(
                 """SELECT COUNT(*) FROM pg_views
-                        WHERE viewname LIKE 'viewtest_%';"""
+                        WHERE viewname LIKE 'testspg_%';"""
             )
 
             (count,) = cur.fetchone()
             self.assertEqual(count, 4)
 
             with self.assertRaises(Exception):
-                cur.execute("""SELECT name from viewtest_relatedview;""")
+                cur.execute("""SELECT name from testspg_relatedview;""")
 
             with self.assertRaises(Exception):
-                cur.execute("""SELECT name from viewtest_dependantview;""")
+                cur.execute("""SELECT name from testspg_dependantview;""")
 
     def test_sync_depending_materialized_views(self):
         """Refresh views that depend on materialized views."""
         with closing(connection.cursor()) as cur:
             cur.execute(
-                """DROP MATERIALIZED VIEW viewtest_materializedrelatedview
+                """DROP MATERIALIZED VIEW testspg_materializedrelatedview
                 CASCADE;"""
             )
 
             cur.execute(
-                """CREATE MATERIALIZED VIEW viewtest_materializedrelatedview as
-                SELECT id AS model_id, name FROM viewtest_testmodel;"""
+                """CREATE MATERIALIZED VIEW testspg_materializedrelatedview as
+                SELECT id AS model_id, name FROM testspg_testmodel;"""
             )
 
             cur.execute(
-                """CREATE MATERIALIZED VIEW viewtest_dependantmaterializedview
-                as SELECT name from viewtest_materializedrelatedview;"""
+                """CREATE MATERIALIZED VIEW testspg_dependantmaterializedview
+                as SELECT name from testspg_materializedrelatedview;"""
             )
-            cur.execute("""SELECT name from viewtest_materializedrelatedview;""")
-            cur.execute("""SELECT name from viewtest_dependantmaterializedview;""")
+            cur.execute("""SELECT name from testspg_materializedrelatedview;""")
+            cur.execute("""SELECT name from testspg_dependantmaterializedview;""")
 
         call_command("sync_pgviews", "--force")
 
         with closing(connection.cursor()) as cur:
             cur.execute(
                 """SELECT COUNT(*) FROM pg_views
-                        WHERE viewname LIKE 'viewtest_%';"""
+                        WHERE viewname LIKE 'testspg_%';"""
             )
 
             (count,) = cur.fetchone()
@@ -248,12 +249,12 @@ class DependantViewTestCase(TestCase):
             with self.assertRaises(Exception):
                 cur.execute(
                     """SELECT name from
-                    viewtest_dependantmaterializedview;"""
+                    testspg_dependantmaterializedview;"""
                 )
-                cur.execute("""SELECT name from viewtest_materializedrelatedview; """)
+                cur.execute("""SELECT name from testspg_materializedrelatedview; """)
 
             with self.assertRaises(Exception):
                 cur.execute(
                     """SELECT name from
-                    viewtest_dependantmaterializedview;"""
+                    testspg_dependantmaterializedview;"""
                 )

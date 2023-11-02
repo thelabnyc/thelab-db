@@ -3,7 +3,7 @@ import logging
 from django import apps
 from django.db.models import signals
 
-log = logging.getLogger("django_pgviews.sync_pgviews")
+logger = logging.getLogger(__name__)
 
 
 class ViewConfig(apps.AppConfig):
@@ -12,7 +12,7 @@ class ViewConfig(apps.AppConfig):
     """
 
     counter = 0
-    name = "django_pgviews"
+    name = "thelabdb.pgviews"
     verbose_name = "Django Postgres Views"
 
     def sync_pgviews(self, sender, app_config, **kwargs):
@@ -23,7 +23,7 @@ class ViewConfig(apps.AppConfig):
         )
 
         if self.counter == total:
-            log.info("All applications have migrated, time to sync")
+            logger.info("All applications have migrated, time to sync")
             # Import here otherwise Django doesn't start properly
             # (models in app init are not allowed)
             from .models import ViewSyncer

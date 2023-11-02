@@ -1,12 +1,6 @@
-import logging
-from optparse import make_option
-
-from django.apps import apps
 from django.core.management.base import BaseCommand
-from django.db import connection
-from django_pgviews.models import ViewSyncer
 
-log = logging.getLogger("django_pgviews.sync_pgviews")
+from ...models import ViewSyncer
 
 
 class Command(BaseCommand):
