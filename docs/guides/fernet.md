@@ -129,3 +129,8 @@ three-step migration dance:
     encrypts them in the process).
 3.  Remove the old field and (if needed) rename the new encrypted field
     to the old field's name.
+
+## Reference
+
+::: thelabdb.fields.fernet.EncryptedField
+    :docstring:

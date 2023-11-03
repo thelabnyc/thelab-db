@@ -1,8 +1,8 @@
 docs_serve:
-	poetry run mkdocs serve --strict
+	DJANGO_SETTINGS_MODULE=thelabdb.tests.settings.docgen_setup poetry run mkdocs serve --strict
 
 docs_build:
-	poetry run mkdocs build --strict
+	DJANGO_SETTINGS_MODULE=thelabdb.tests.settings.docgen_setup poetry run mkdocs build --strict
 
 docs: docs_build
 	rm -rf public/ && \

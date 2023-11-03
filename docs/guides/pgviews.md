@@ -12,18 +12,6 @@ The features made available here replace some of the following practices:
 -  Sequences represented by a one-to-many, with an `order` integer field.
 -  Complex types represented by JSON in a text field.
 
-## Installation
-
-Add to installed applications in `settings.py`:
-
-```py
-INSTALLED_APPS = (
-  # ...
-  "thelabdb",
-  "thelabdb.pgviews",
-)
-```
-
 ## Examples
 
 ```py

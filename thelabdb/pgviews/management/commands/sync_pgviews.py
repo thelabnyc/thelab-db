@@ -4,6 +4,10 @@ from ...models import ViewSyncer
 
 
 class Command(BaseCommand):
+    """
+    Create/update Postgres views for all installed apps.
+    """
+
     help = """Create/update Postgres views for all installed apps."""
 
     def add_arguments(self, parser):

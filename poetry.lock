@@ -580,6 +580,19 @@ files = [
 ]
 
 [[package]]
+name = "mkautodoc"
+version = "0.2.0"
+description = "AutoDoc for MarkDown"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "mkautodoc-0.2.0.tar.gz", hash = "sha256:b6e0c89804ba39d453ce5795eb040e5615756f90438ac04f47e97893a86a10cd"},
+]
+
+[package.dependencies]
+Markdown = "*"
+
+[[package]]
 name = "mkdocs"
 version = "1.5.3"
 description = "Project documentation with Markdown."
@@ -1329,4 +1342,4 @@ bracex = ">=2.1.1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "1a35dec0ef106ca36451fb6807e9cb5a935890baa5146a26f1dc9e8f35d2705d"
+content-hash = "e6224f798c9533b50c12ecbc31e855ee8bc12d7cc51265d1cd5236ab8b8c9296"

@@ -10,6 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
+    """
+    Clear Postgres views. Use this before running a migration.
+    """
+
     help = """Clear Postgres views. Use this before running a migration"""
 
     def handle(self, **options):

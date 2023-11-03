@@ -9,7 +9,20 @@ from . import hkdf
 
 
 class EncryptedField(models.Field):
-    """A field that encrypts values using Fernet symmetric encryption."""
+    """
+    A field that encrypts values using Fernet symmetric encryption. Designed to
+    be used as a class mixin, along with another built-in field type.
+
+    For example:
+
+    ```py
+    from django.db import models
+    from thelabdb.fields import EncryptedField
+
+    class EncryptedTextField(EncryptedField, models.TextField):
+        pass
+    ```
+    """
 
     _internal_type = "BinaryField"
 
@@ -26,7 +39,7 @@ class EncryptedField(models.Field):
             raise ImproperlyConfigured(
                 "%s does not support db_index=True." % self.__class__.__name__
             )
-        super(EncryptedField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @cached_property
     def keys(self):
@@ -51,7 +64,7 @@ class EncryptedField(models.Field):
         return self._internal_type
 
     def get_db_prep_save(self, value, connection):
-        value = super(EncryptedField, self).get_db_prep_save(value, connection)
+        value = super().get_db_prep_save(value, connection)
         if value is not None:
             retval = self.fernet.encrypt(force_bytes(value))
             return connection.Database.Binary(retval)
@@ -66,11 +79,9 @@ class EncryptedField(models.Field):
         # Temporarily pretend to be whatever type of field we're masquerading
         # as, for purposes of constructing validators (needed for
         # IntegerField and subclasses).
-        self.__dict__["_internal_type"] = super(
-            EncryptedField, self
-        ).get_internal_type()
+        self.__dict__["_internal_type"] = super().get_internal_type()
         try:
-            return super(EncryptedField, self).validators
+            return super().validators
         finally:
             del self.__dict__["_internal_type"]
 
@@ -95,26 +106,56 @@ for name, lookup in models.Field.class_lookups.items():
 
 
 class EncryptedTextField(EncryptedField, models.TextField):
+    """
+    Fernet encrypted version of Django's built-in
+    [TextField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.TextField).
+    """
+
     pass
 
 
 class EncryptedCharField(EncryptedField, models.CharField):
+    """
+    Fernet encrypted version of Django's built-in
+    [CharField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.CharField).
+    """
+
     pass
 
 
 class EncryptedEmailField(EncryptedField, models.EmailField):
+    """
+    Fernet encrypted version of Django's built-in
+    [EmailField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.EmailField).
+    """
+
     pass
 
 
 class EncryptedIntegerField(EncryptedField, models.IntegerField):
+    """
+    Fernet encrypted version of Django's built-in
+    [IntegerField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.IntegerField).
+    """
+
     pass
 
 
 class EncryptedDateField(EncryptedField, models.DateField):
+    """
+    Fernet encrypted version of Django's built-in
+    [DateField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateField).
+    """
+
     pass
 
 
 class EncryptedDateTimeField(EncryptedField, models.DateTimeField):
+    """
+    Fernet encrypted version of Django's built-in
+    [DateTimeField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateTimeField).
+    """
+
     pass
 
 
