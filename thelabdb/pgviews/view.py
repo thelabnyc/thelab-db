@@ -4,7 +4,6 @@ import collections
 import copy
 import re
 
-import django
 import psycopg2
 from django.apps import apps
 from django.core import exceptions
