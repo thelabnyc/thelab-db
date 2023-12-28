@@ -4,13 +4,20 @@ import collections
 import copy
 import re
 
-import psycopg2
 from django.apps import apps
 from django.core import exceptions
 from django.db import connection, models, transaction
 from django.db.models.query import QuerySet
 
 from .db import get_fields_by_name
+
+try:
+    try:
+        from psycopg import ProgrammingError
+    except ImportError:
+        from psycopg2 import ProgrammingError
+except ImportError:
+    raise exceptions.ImproperlyConfigured("Error loading psycopg2 or psycopg module")
 
 FIELD_SPEC_REGEX = (
     r"^([A-Za-z_][A-Za-z0-9_]*)\."
@@ -114,7 +121,7 @@ def create_view(
                             view_query
                         )
                     )
-            except psycopg2.ProgrammingError:
+            except ProgrammingError:
                 force_required = True
             finally:
                 cursor.execute("DROP VIEW IF EXISTS check_conflict;")

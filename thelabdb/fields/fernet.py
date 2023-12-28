@@ -138,7 +138,10 @@ class EncryptedIntegerField(EncryptedField, models.IntegerField):
     [IntegerField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.IntegerField).
     """
 
-    pass
+    def get_db_prep_value(self, value, connection, prepared=False):
+        # This gets around calling DatabaseOperations.adapt_integerfield_value
+        # when using Psycopg3
+        return models.Field.get_db_prep_value(self, value, connection, prepared)
 
 
 class EncryptedDateField(EncryptedField, models.DateField):
