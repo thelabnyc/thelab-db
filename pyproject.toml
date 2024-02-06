@@ -15,7 +15,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 Django = ">=3.2.0,<5.0"
-cryptography = "^41.0.5"
+cryptography = ">=41.0.5"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"
