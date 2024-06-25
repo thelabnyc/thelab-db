@@ -19,7 +19,7 @@ cryptography = ">=41.0.5"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.0.0"
-coverage = "^7.3.2"
+coverage = "^7.5.3"
 tox = "^4.11.3"
 psycopg = {extras = ["binary"], version = "^3.1.15"}
 
