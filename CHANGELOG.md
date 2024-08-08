@@ -1,9 +1,7 @@
-# Changelog
+# Changes
 
-## 0.1.0
+## v0.1.1 (2024-02-06)
 
-- Add support for Psycopg3
+## v0.1.0 (2023-12-28)
 
-## 0.0.1
-
-Initial Release
+## v0.0.1 (2023-11-02)
