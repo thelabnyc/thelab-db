@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "thelabdb"
-version = "0.1.2b0"
+version = "0.1.2"
 description = "Django DB Utilities"
 authors = ["thelab <thelabdev@thelab.co>"]
 license = "ISC"
