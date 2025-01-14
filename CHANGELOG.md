@@ -1,5 +1,17 @@
 # Changes
 
+## v0.2.0 (2025-01-14)
+
+### Feat
+
+- add types
+
+### Fix
+
+- **deps**: update dependency cryptography to >=44.0.0
+- **deps**: update dependency cryptography to >=43.0.3
+- **deps**: update dependency cryptography to >=43.0.1
+
 ## v0.1.2 (2024-08-31)
 
 ## v0.1.2b0 (2024-08-08)
