@@ -1,3 +1,4 @@
+from typing import Any
 import logging
 
 from django.apps import apps
@@ -9,10 +10,10 @@ from .view import MaterializedView, View, create_view
 logger = logging.getLogger(__name__)
 
 
-class ViewSyncer(object):
-    def run(self, force, update, **options):
-        self.synced = []
-        backlog = []
+class ViewSyncer:
+    def run(self, force: bool, update: bool, **options: Any) -> None:
+        self.synced: list[str] = []
+        backlog: list[type[View]] = []
         for view_cls in apps.get_models():
             if not (
                 isinstance(view_cls, type)
@@ -33,7 +34,9 @@ class ViewSyncer(object):
         else:
             all_views_synced.send(sender=None)
 
-    def run_backlog(self, models, force, update):
+    def run_backlog(
+        self, models: list[type[View]], force: bool, update: bool
+    ) -> list[type[View]]:
         """Installs the list of models given from the previous backlog
 
         If the correct dependent views have not been installed, the view
@@ -41,7 +44,7 @@ class ViewSyncer(object):
 
         Eventually we get to a point where all dependencies are sorted.
         """
-        backlog = []
+        backlog: list[type[View]] = []
         for view_cls in models:
             skip = False
             name = "{}.{}".format(view_cls._meta.app_label, view_cls.__name__)
@@ -72,8 +75,8 @@ class ViewSyncer(object):
                 )
                 self.synced.append(name)
             except Exception as exc:
-                exc.view_cls = view_cls
-                exc.python_name = name
+                exc.view_cls = view_cls  # type:ignore[attr-defined]
+                exc.python_name = name  # type:ignore[attr-defined]
                 raise
             else:
                 if status == "CREATED":

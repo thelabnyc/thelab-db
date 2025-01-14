@@ -11,7 +11,7 @@ info = b"django-fernet-fields"
 salt = b"django-fernet-fields-hkdf-salt"
 
 
-def derive_fernet_key(input_key):
+def derive_fernet_key(input_key: str | bytes) -> bytes:
     """Derive a 32-bit b64-encoded Fernet key from arbitrary input key."""
     hkdf = HKDF(
         algorithm=hashes.SHA256(),

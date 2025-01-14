@@ -6,7 +6,7 @@ stages:
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   POETRY_CACHE_DIR: "$CI_PROJECT_DIR/.cache/poetry"
-  PYIMAGE: py311
+  PYIMAGE: py313
 
 .rules_mrs_and_protected:
   - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -77,10 +77,12 @@ test:sqlite: &test_sqlite
     TEST_PKGS: thelabdb.tests.testsuniv
   parallel:
     matrix:
-      - PYIMAGE: py310
-        TOX_SKIP_ENV: "^(?!py310-)"
       - PYIMAGE: py311
         TOX_SKIP_ENV: "^(?!py311-)"
+      - PYIMAGE: py312
+        TOX_SKIP_ENV: "^(?!py312-)"
+      - PYIMAGE: py313
+        TOX_SKIP_ENV: "^(?!py313-)"
   script:
     - poetry run tox
   coverage: '/^TOTAL.+?(\d+\%)$/'
