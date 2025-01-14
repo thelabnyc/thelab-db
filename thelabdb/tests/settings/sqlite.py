@@ -1,5 +1,9 @@
 import os
 
+import django_stubs_ext
+
+django_stubs_ext.monkeypatch()
+
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 INSTALLED_APPS = [
     "django.contrib.auth",

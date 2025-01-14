@@ -1,14 +1,18 @@
 """Helpers to access Postgres views from the Django ORM.
 """
 
-import collections
+from collections import defaultdict
+from collections.abc import Collection, Iterable, Mapping
+from typing import Any, Literal, Optional, TypeVar, cast
 import copy
 import re
 
 from django.apps import apps
 from django.core import exceptions
 from django.db import connection, models, transaction
+from django.db.backends.base.base import BaseDatabaseWrapper
 from django.db.models.query import QuerySet
+from typing_extensions import Self
 
 from .db import get_fields_by_name
 
@@ -16,7 +20,7 @@ try:
     try:
         from psycopg import ProgrammingError
     except ImportError:
-        from psycopg2 import ProgrammingError
+        from psycopg2 import ProgrammingError  # type:ignore[assignment]
 except ImportError:
     raise exceptions.ImproperlyConfigured("Error loading psycopg2 or psycopg module")
 
@@ -27,8 +31,14 @@ FIELD_SPEC_REGEX = (
 )
 FIELD_SPEC_RE = re.compile(FIELD_SPEC_REGEX)
 
+T = TypeVar("T", bound=models.Model)
 
-def hasfield(model_cls, field_name):
+ViewOpResult = Literal[
+    "UPDATED", "CREATED", "FORCED", "FORCE_REQUIRED", "EXISTS", "DROPPED"
+]
+
+
+def hasfield(model_cls: type[models.Model], field_name: str) -> bool:
     """Like `hasattr()`, but for model fields.
 
     >>> from django.contrib.auth.models import User
@@ -44,17 +54,33 @@ def hasfield(model_cls, field_name):
         return False
 
 
+AppLabelModelName = tuple[str, str]
+
 # Projections of models fields onto views which have been deferred due to
 # model import and loading dependencies.
 # Format: (app_label, model_name): {view_cls: [field_name, ...]}
-_DEFERRED_PROJECTIONS = collections.defaultdict(lambda: collections.defaultdict(list))
+DeferredProjections = defaultdict[
+    AppLabelModelName,
+    defaultdict[
+        type[models.Model],
+        list[str],
+    ],
+]
+_DEFERRED_PROJECTIONS: DeferredProjections = defaultdict(lambda: defaultdict(list))
 
 
-def realize_deferred_projections(sender, *args, **kwargs):
+def realize_deferred_projections(
+    sender: type[models.Model],
+    *args: Any,
+    **kwargs: Any,
+) -> None:
     """Project any fields which were deferred pending model preparation."""
     app_label = sender._meta.app_label
     model_name = sender.__name__.lower()
-    pending = _DEFERRED_PROJECTIONS.pop((app_label, model_name), {})
+    pending: dict[type[models.Model], list[str]] = _DEFERRED_PROJECTIONS.pop(
+        (app_label, model_name),
+        {},
+    )
     for view_cls, field_names in pending.items():
         field_instances = get_fields_by_name(sender, *field_names)
         for name, field in field_instances.items():
@@ -70,14 +96,14 @@ models.signals.class_prepared.connect(realize_deferred_projections)
 
 @transaction.atomic()
 def create_view(
-    connection,
-    view_name,
-    view_query,
-    update=True,
-    force=False,
-    materialized=False,
-    index=None,
-):
+    connection: BaseDatabaseWrapper,
+    view_name: str,
+    view_query: str,
+    update: bool = True,
+    force: bool = False,
+    materialized: bool = False,
+    index: Optional[str] = None,
+) -> ViewOpResult:
     """
     Create a named view on a connection.
 
@@ -127,6 +153,7 @@ def create_view(
             finally:
                 cursor.execute("DROP VIEW IF EXISTS check_conflict;")
 
+        ret: ViewOpResult
         if materialized:
             cursor.execute(
                 "DROP MATERIALIZED VIEW IF EXISTS {0} CASCADE;".format(view_name)
@@ -159,7 +186,11 @@ def create_view(
         cursor_wrapper.close()
 
 
-def clear_view(connection, view_name, materialized=False):
+def clear_view(
+    connection: BaseDatabaseWrapper,
+    view_name: str,
+    materialized: bool = False,
+) -> ViewOpResult:
     """
     Remove a named view on connection.
     """
@@ -178,12 +209,17 @@ def clear_view(connection, view_name, materialized=False):
 
 
 class ViewMeta(models.base.ModelBase):
-    def __new__(metacls, name, bases, attrs):
+    def __new__(
+        metacls,
+        name: str,
+        bases: tuple[type, ...],
+        attrs: dict[str, Any],
+    ) -> type[models.Model]:
         """Deal with all of the meta attributes, removing any Django does not want"""
         # Get attributes before Django
-        dependencies = attrs.pop("dependencies", [])
-        projection = attrs.pop("projection", [])
-        concurrent_index = attrs.pop("concurrent_index", None)
+        dependencies: list[str] = attrs.pop("dependencies", [])
+        projection: list[str] = attrs.pop("projection", [])
+        concurrent_index: str | None = attrs.pop("concurrent_index", None)
 
         # Get projection
         deferred_projections = []
@@ -198,7 +234,10 @@ class ViewMeta(models.base.ModelBase):
             else:
                 raise TypeError("Unrecognized field specifier: %r" % field_name)
 
-        view_cls = models.base.ModelBase.__new__(metacls, name, bases, attrs)
+        view_cls = cast(
+            type[models.Model],
+            models.base.ModelBase.__new__(metacls, name, bases, attrs),
+        )
 
         # Get dependencies
         setattr(view_cls, "_dependencies", dependencies)
@@ -212,10 +251,10 @@ class ViewMeta(models.base.ModelBase):
 
         return view_cls
 
-    def add_to_class(self, name, value):
+    def add_to_class(self, name: str, value: Any) -> None:
         if name == "_base_manager":
             return
-        super().add_to_class(name, value)
+        super().add_to_class(name, value)  # type:ignore[misc]
 
 
 class BaseManagerMeta:
@@ -225,14 +264,17 @@ class BaseManagerMeta:
 class View(models.Model, metaclass=ViewMeta):
     """Helper for exposing Postgres views as Django models."""
 
-    _deferred = False
+    _dependencies: list[str]
+    _concurrent_index: str
+    _deferred: bool = False
+    sql: str
 
     class Meta:
         abstract = True
         managed = False
 
 
-def _realise_projections(app_label, model_name):
+def _realise_projections(app_label: str, model_name: str) -> None:
     """Checks whether the model has been loaded and runs
     realise_deferred_projections() if it has.
     """
@@ -240,43 +282,56 @@ def _realise_projections(app_label, model_name):
         model_cls = apps.get_model(app_label, model_name)
     except exceptions.AppRegistryNotReady:
         return
-    if model_cls is not None:
+    if model_cls is not None and issubclass(model_cls, View):
         realize_deferred_projections(model_cls)
 
 
-class ReadOnlyViewQuerySet(QuerySet):
-    def _raw_delete(self, *args, **kwargs):
+class ReadOnlyViewQuerySet(QuerySet[T]):
+    def _raw_delete(self, *args: Any, **kwargs: Any) -> int:
         return 0
 
-    def delete(self):
+    def delete(self) -> tuple[int, dict[str, int]]:
         raise NotImplementedError("Not allowed")
 
-    def update(self, **kwargs):
+    def update(self, **kwargs: Any) -> int:
         raise NotImplementedError("Not allowed")
 
-    def _update(self, values):
+    def _update(self, **kwargs: Any) -> int:
         raise NotImplementedError("Not allowed")
 
-    def create(self, **kwargs):
+    def create(self, **kwargs: Any) -> T:
         raise NotImplementedError("Not allowed")
 
-    def update_or_create(self, defaults=None, **kwargs):
+    def update_or_create(
+        self,
+        defaults: Mapping[str, Any] | None = None,
+        create_defaults: Mapping[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> tuple[T, bool]:
         raise NotImplementedError("Not allowed")
 
-    def bulk_create(self, objs, batch_size=None):
+    def bulk_create(
+        self,
+        objs: Iterable[T],
+        batch_size: int | None = None,
+        ignore_conflicts: bool = False,
+        update_conflicts: bool = False,
+        update_fields: Collection[str] | None = None,
+        unique_fields: Collection[str] | None = None,
+    ) -> list[T]:
         raise NotImplementedError("Not allowed")
 
 
-class ReadOnlyViewManager(models.Manager):
-    def get_queryset(self):
+class ReadOnlyViewManager(models.Manager[T]):
+    def get_queryset(self) -> ReadOnlyViewQuerySet[T]:
         return ReadOnlyViewQuerySet(self.model, using=self._db)
 
 
 class ReadOnlyView(View):
     """View which cannot be altered"""
 
-    _base_manager = ReadOnlyViewManager()
-    objects = ReadOnlyViewManager()
+    _base_manager: ReadOnlyViewManager[Self] = ReadOnlyViewManager()
+    objects: ReadOnlyViewManager[Self] = ReadOnlyViewManager()
 
     class Meta(BaseManagerMeta):
         abstract = True
@@ -290,7 +345,7 @@ class MaterializedView(View):
     """
 
     @classmethod
-    def refresh(self, concurrently=False):
+    def refresh(self, concurrently: bool = False) -> None:
         cursor_wrapper = connection.cursor()
         cursor = cursor_wrapper.cursor
         try:
@@ -315,8 +370,8 @@ class MaterializedView(View):
 class ReadOnlyMaterializedView(MaterializedView):
     """Read-only version of the materialized view"""
 
-    _base_manager = ReadOnlyViewManager()
-    objects = ReadOnlyViewManager()
+    _base_manager: ReadOnlyViewManager[Self] = ReadOnlyViewManager()
+    objects: ReadOnlyViewManager[Self] = ReadOnlyViewManager()
 
     class Meta(BaseManagerMeta):
         abstract = True

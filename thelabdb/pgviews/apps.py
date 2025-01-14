@@ -1,6 +1,8 @@
+from typing import Any
 import logging
 
 from django import apps
+from django.apps.config import AppConfig
 from django.db.models import signals
 
 logger = logging.getLogger(__name__)
@@ -15,7 +17,12 @@ class ViewConfig(apps.AppConfig):
     name = "thelabdb.pgviews"
     verbose_name = "Django Postgres Views"
 
-    def sync_pgviews(self, sender, app_config, **kwargs):
+    def sync_pgviews(
+        self,
+        sender: AppConfig,
+        app_config: AppConfig,
+        **kwargs: Any,
+    ) -> None:
         """Forcibly sync the views."""
         self.counter = self.counter + 1
         total = len(
@@ -31,6 +38,6 @@ class ViewConfig(apps.AppConfig):
             vs = ViewSyncer()
             vs.run(force=True, update=True)
 
-    def ready(self):
+    def ready(self) -> None:
         """Find and setup the apps to set the post_migrate hooks for."""
         signals.post_migrate.connect(self.sync_pgviews)

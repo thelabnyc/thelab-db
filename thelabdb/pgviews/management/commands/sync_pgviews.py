@@ -1,4 +1,6 @@
-from django.core.management.base import BaseCommand
+from typing import Any
+
+from django.core.management.base import BaseCommand, CommandParser
 
 from ...models import ViewSyncer
 
@@ -10,7 +12,7 @@ class Command(BaseCommand):
 
     help = """Create/update Postgres views for all installed apps."""
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
             "--no-update",
             action="store_false",
@@ -27,6 +29,6 @@ class Command(BaseCommand):
             breaking changes have been made to the schema.""",
         )
 
-    def handle(self, force, update, **options):
+    def handle(self, force: bool, update: bool, **options: Any) -> None:
         vs = ViewSyncer()
         vs.run(force, update)

@@ -1,3 +1,4 @@
+from typing import Any
 import logging
 
 from django.apps import apps
@@ -16,7 +17,7 @@ class Command(BaseCommand):
 
     help = """Clear Postgres views. Use this before running a migration"""
 
-    def handle(self, **options):
+    def handle(self, **options: Any) -> None:
         """ """
         for view_cls in apps.get_models():
             if not (
