@@ -26,7 +26,7 @@ django-stubs-ext = "^5.1.2"
 flake8 = "^7.1.1"
 coverage = "^7.6.10"
 tox = "^4.23.2"
-psycopg = {extras = ["binary"], version = "^3.2.3"}
+psycopg = {extras = ["binary"], version = "^3.2.4"}
 mypy = "^1.14.1"
 django-stubs = "^5.1.2"
 types-cryptography = "^3.3.23.2"
