@@ -1613,4 +1613,4 @@ bracex = ">=2.1.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "2f3782a06d48076093b40719be9ab39f16c35b91b36075995344cb77efdda47a"
+content-hash = "78f2e1717eb4f3de7ae17bd96765a53b5b34eea7773f1b4b633a7091109f47b0"
