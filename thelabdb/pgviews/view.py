@@ -1,5 +1,4 @@
-"""Helpers to access Postgres views from the Django ORM.
-"""
+"""Helpers to access Postgres views from the Django ORM."""
 
 from collections import defaultdict
 from collections.abc import Collection, Iterable, Mapping
