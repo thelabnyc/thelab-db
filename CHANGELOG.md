@@ -1,5 +1,17 @@
 # Changes
 
+## v0.3.0b0 (2025-02-20)
+
+### Feat
+
+- add thelabdb.fields.pydantic.PydanticField
+
+### Fix
+
+- lint
+- **deps**: update dependency cryptography to >=44.0.1
+- **deps**: update dependency django-stubs-ext to ^5.1.3
+
 ## v0.2.0 (2025-01-14)
 
 ### Feat
