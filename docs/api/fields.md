@@ -22,3 +22,6 @@
 
 ::: thelabdb.fields.fernet.EncryptedDateTimeField
     :docstring:
+
+::: thelabdb.fields.pydantic.PydanticField
+    :docstring:
