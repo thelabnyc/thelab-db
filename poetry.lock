@@ -1047,7 +1047,6 @@ files = [
 
 [package.dependencies]
 psycopg-binary = {version = "3.2.5", optional = true, markers = "implementation_name != \"pypy\" and extra == \"binary\""}
-typing-extensions = {version = ">=4.6", markers = "python_version < \"3.13\""}
 tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 
 [package.extras]
@@ -1502,6 +1501,25 @@ dev = ["build", "hatch"]
 doc = ["sphinx"]
 
 [[package]]
+name = "thelab-typing"
+version = "0.1.0b0"
+description = "A collection of utilities related to Python type checking"
+optional = false
+python-versions = ">=3.13"
+groups = ["main"]
+files = [
+    {file = "thelab_typing-0.1.0b0-py3-none-any.whl", hash = "sha256:7343b4e23d6059941ce0baa1e730ff0c8b1e044ed06bfaea6912472b3478fd83"},
+    {file = "thelab_typing-0.1.0b0.tar.gz", hash = "sha256:2b003083753f17a7210ced4a96be7067afb9b908b6e6afd1ff90553aebc3c5c7"},
+]
+
+[package.dependencies]
+pydantic = ">=2.10.6,<3.0.0"
+
+[package.extras]
+django = ["django (>=4.2,<5.2)", "django-stubs-ext (>=4.2)"]
+drf = ["django-stubs-ext (>=4.2)", "djangorestframework (>=3.15)"]
+
+[[package]]
 name = "tox"
 version = "4.24.2"
 description = "tox is a generic virtualenv management and test command line tool"
@@ -1687,5 +1705,5 @@ bracex = ">=2.1.1"
 
 [metadata]
 lock-version = "2.1"
-python-versions = "^3.12"
-content-hash = "ad41be8f2c0aa1a486536213d67d73c7a83c30d0ca05d1b069a0a41263a0d259"
+python-versions = "^3.13"
+content-hash = "795b60ad2b2d0022c728c6f22ca227995109d125a3b84d85e8bceb956ec6e423"
