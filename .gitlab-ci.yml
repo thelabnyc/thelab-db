@@ -77,8 +77,6 @@ test:sqlite: &test_sqlite
     TEST_PKGS: thelabdb.tests.testsuniv
   parallel:
     matrix:
-      - PYIMAGE: py312
-        TOX_SKIP_ENV: "^(?!py312-)"
       - PYIMAGE: py313
         TOX_SKIP_ENV: "^(?!py313-)"
   script:
