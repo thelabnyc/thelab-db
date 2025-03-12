@@ -9,10 +9,9 @@ from django.db.models.expressions import Expression
 from django.db.models.fields.json import JSONField
 from django.utils.translation import gettext_lazy as _
 from django_stubs_ext import StrOrPromise
+from thelabtyping.result import Err, Ok, Result
 import pydantic
 import pydantic_core
-
-from ..result import Either, Left, Right
 
 
 def _pyd_validation_error_to_django(
@@ -33,13 +32,13 @@ def _pyd_validation_error_to_django(
 def _validate[T: pydantic.BaseModel](
     model_cls: type[T],
     value: str | bytes | dict[str, Any],
-) -> Either[T, pydantic_core.ValidationError]:
+) -> Result[T, pydantic_core.ValidationError]:
     try:
         if isinstance(value, str) or isinstance(value, bytes):
-            return Left(model_cls.model_validate_json(value))
-        return Left(model_cls.model_validate(value))
+            return Ok(model_cls.model_validate_json(value))
+        return Ok(model_cls.model_validate(value))
     except pydantic_core.ValidationError as e:
-        return Right(e)
+        return Err(e)
 
 
 class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
@@ -101,8 +100,8 @@ class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
         # First thing to try: validate the data exactly as it came out of the
         # database. If that works, great! Return the resulting object.
         result = _validate(self.model_cls, value)
-        if result.is_left:
-            return result.left
+        if result.is_ok:
+            return result.ok_value
 
         # If the data failed validation, second thing to try it to call the
         # `coerce_invalid_data` function (if one was provided), and allow it to
@@ -123,8 +122,8 @@ class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
         if self.coerce_invalid_data is not None:
             coerced = self.coerce_invalid_data(parsed_value)
             result = _validate(self.model_cls, coerced)
-            if result.is_left:
-                return result.left
+            if result.is_ok:
+                return result.ok_value
 
         # Last chance: if we're told to, use `model_construct` to bypass
         # validation and force the invalid data to load. This isn't recommended
@@ -133,7 +132,7 @@ class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
             return forced
 
         # All else has failed, so now we throw a ValidationError
-        raise _pyd_validation_error_to_django(result.right)
+        raise _pyd_validation_error_to_django(result.err_value)
 
     def get_db_prep_value(
         self,
@@ -170,8 +169,8 @@ class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
             )
         dumped_val = value.model_dump(mode="json")
         result = _validate(self.model_cls, dumped_val)
-        if result.is_right:
-            raise _pyd_validation_error_to_django(result.right)
+        if result.is_err:
+            raise _pyd_validation_error_to_django(result.err_value)
         # Use the dumped value to do all the upstream validation.
         super().validate(dumped_val, model_instance)
 
