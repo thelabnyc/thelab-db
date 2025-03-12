@@ -1,5 +1,16 @@
 # Changes
 
+## v0.3.0 (2025-03-12)
+
+### Feat
+
+- use Result types from thelabtyping
+- drop Python 3.12 support
+
+### Fix
+
+- **deps**: update dependency cryptography to >=44.0.2
+
 ## v0.3.0b0 (2025-02-20)
 
 ### Feat
