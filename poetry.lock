@@ -1502,22 +1502,22 @@ doc = ["sphinx"]
 
 [[package]]
 name = "thelab-typing"
-version = "0.1.0b1"
+version = "0.1.0b4"
 description = "A collection of utilities related to Python type checking"
 optional = false
 python-versions = ">=3.13"
 groups = ["main"]
 files = [
-    {file = "thelab_typing-0.1.0b1-py3-none-any.whl", hash = "sha256:ebf1fff4f5a4751a2060e8305bf555fdf30fe5c6845093b4859ffdf4f99f010f"},
-    {file = "thelab_typing-0.1.0b1.tar.gz", hash = "sha256:c3d7d12ba1ed2fdfee7576058a1ca545a19ccc0d74fbe49461a1fec992afa1d8"},
+    {file = "thelab_typing-0.1.0b4-py3-none-any.whl", hash = "sha256:58cdd991cb76a0e71f64cab55096460261d91605ec8e136be36ca7e9b7680e7d"},
+    {file = "thelab_typing-0.1.0b4.tar.gz", hash = "sha256:047f598e89b27b9c86a2b2e18e059fe144d10d0415ce87ce744943f8000ff423"},
 ]
 
 [package.dependencies]
 pydantic = ">=2.10.6,<3.0.0"
 
 [package.extras]
-django = ["django (>=4.2,<5.2)", "django-stubs-ext (>=4.2)"]
-drf = ["django-stubs-ext (>=4.2)", "djangorestframework (>=3.15)"]
+django = ["django (>=4.2,<5.2)", "django-stubs-ext (>=5.1.3)"]
+drf = ["django-stubs-ext (>=5.1.3)", "djangorestframework (>=3.15)"]
 
 [[package]]
 name = "tox"
@@ -1706,4 +1706,4 @@ bracex = ">=2.1.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "3bfea6f64e8904add1e74d417f1c1f92f7d042288a74e785b0730193ee71aa90"
+content-hash = "3727315bbf800862f088a42e7b5b034110df4e111bf4ab6f1a5a8aa5efcee5fd"
