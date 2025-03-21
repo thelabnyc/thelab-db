@@ -1,5 +1,17 @@
 # Changes
 
+## v0.4.0 (2025-03-21)
+
+### Feat
+
+- add NullCharField and UppercaseCharField
+- add tests demo of NewType branded fields (#28807)
+
+### Fix
+
+- enable type checking on tests and migrations
+- **deps**: update dependency thelab-typing to ^0.1.0-beta.1
+
 ## v0.3.0 (2025-03-12)
 
 ### Feat
