@@ -75,6 +75,7 @@ from_first = true
 [tool.coverage.run]
 branch = true
 source_pkgs = ["thelabdb"]
+omit = ["thelabdb/tests/**/*py"]
 
 [tool.coverage.report]
 show_missing = true

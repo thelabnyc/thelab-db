@@ -81,12 +81,6 @@ test:sqlite: &test_sqlite
         TOX_SKIP_ENV: "^(?!py313-)"
   script:
     - poetry run tox
-  coverage: '/^TOTAL.+?(\d+\%)$/'
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
 
 test:postgres:
   <<: *test_sqlite
@@ -99,6 +93,14 @@ test:postgres:
     TEST_PKGS: thelabdb.tests.testsuniv thelabdb.tests.testspg
   services:
     - postgres:latest
+  # Only get coverage from postgres job since the sqlite job skips the postgres
+  # test, which makes coverage seem lower than it actually is.
+  coverage: '/^TOTAL.+?(\d+\%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 
 test:docs:
   <<: *dev_dependency_job

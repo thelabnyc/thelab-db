@@ -121,7 +121,7 @@ class ViewTestCase(TestCase):
     def test_materialized_view(self) -> None:
         """Test a materialized view works correctly"""
         self.assertEqual(
-            models.MaterializedRelatedView.objects.count(),
+            models.MaterializedRelatedView.objects.count(),  # type:ignore[misc]
             0,
             "Materialized view should not have anything",
         )
@@ -131,7 +131,7 @@ class ViewTestCase(TestCase):
         test_model.save()
 
         self.assertEqual(
-            models.MaterializedRelatedView.objects.count(),
+            models.MaterializedRelatedView.objects.count(),  # type:ignore[misc]
             0,
             "Materialized view should not have anything",
         )
@@ -139,7 +139,7 @@ class ViewTestCase(TestCase):
         models.MaterializedRelatedView.refresh()
 
         self.assertEqual(
-            models.MaterializedRelatedView.objects.count(),
+            models.MaterializedRelatedView.objects.count(),  # type:ignore[misc]
             1,
             "Materialized view should have updated",
         )
@@ -147,7 +147,7 @@ class ViewTestCase(TestCase):
         models.MaterializedRelatedViewWithIndex.refresh(concurrently=True)
 
         self.assertEqual(
-            models.MaterializedRelatedViewWithIndex.objects.count(),
+            models.MaterializedRelatedViewWithIndex.objects.count(),  # type:ignore[misc]
             1,
             "Materialized view should have updated concurrently",
         )
