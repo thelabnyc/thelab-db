@@ -13,7 +13,6 @@ from . import hkdf
 
 Validator = Callable[[str | None], None]
 
-_T = TypeVar("_T")
 _ST = TypeVar("_ST", contravariant=True)
 _GT = TypeVar("_GT", covariant=True)
 
@@ -89,7 +88,7 @@ class EncryptedField(models.Field[_ST, _GT]):
         value: Optional[bytes],
         expression: Col,
         connection: BaseDatabaseWrapper,
-        *args: Any
+        *args: Any,
     ) -> str | int | None:
         if value is not None:
             value = bytes(value)
@@ -112,7 +111,7 @@ class EncryptedField(models.Field[_ST, _GT]):
             del self.__dict__["_internal_type"]
 
 
-def get_prep_lookup(self: models.Lookup[_T]) -> Any:
+def get_prep_lookup[_T](self: models.Lookup[_T]) -> Any:
     """Raise errors for unsupported lookups"""
     raise FieldError(
         "{} '{}' does not support lookups".format(

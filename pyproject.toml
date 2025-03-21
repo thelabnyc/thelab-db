@@ -65,16 +65,8 @@ show_error_codes = true
 # Not turned on by strict
 strict_equality = true
 
-[[tool.mypy.overrides]]
-module = "*.migrations.*"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "*.tests.*"
-ignore_errors = true
-
 [tool.django-stubs]
-django_settings_module = "thelabdb.tests.settings.docgen_setup"
+django_settings_module = "thelabdb.tests.settings.pg"
 
 [tool.isort]
 profile = "black"
@@ -83,6 +75,7 @@ from_first = true
 [tool.coverage.run]
 branch = true
 source_pkgs = ["thelabdb"]
+omit = ["thelabdb/tests/**/*py"]
 
 [tool.coverage.report]
 show_missing = true

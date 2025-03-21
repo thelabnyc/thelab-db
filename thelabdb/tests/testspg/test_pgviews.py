@@ -1,4 +1,5 @@
 from contextlib import closing
+from typing import Any
 
 from django.contrib import auth
 from django.core.management import call_command
@@ -13,7 +14,7 @@ from . import models
 
 
 @receiver(signals.post_migrate)
-def create_test_schema(sender, app_config, **kwargs):
+def create_test_schema(sender: object, app_config: object, **kwargs: object) -> None:
     command = "CREATE SCHEMA IF NOT EXISTS {};".format("test_schema")
     print(f"\n\n{command}\n\n")
     with connection.cursor() as cursor:
@@ -23,7 +24,7 @@ def create_test_schema(sender, app_config, **kwargs):
 class ViewTestCase(TestCase):
     """Run the tests to ensure the post_migrate hooks were called."""
 
-    def test_views_have_been_created(self):
+    def test_views_have_been_created(self) -> None:
         """Look at the PG View table to ensure views were created."""
         with closing(connection.cursor()) as cur:
             cur.execute(
@@ -50,7 +51,7 @@ class ViewTestCase(TestCase):
             (count,) = cur.fetchone()
             self.assertEqual(count, 1)
 
-    def test_clear_views(self):
+    def test_clear_views(self) -> None:
         """Check the PG View table to see that the views were removed."""
         call_command("clear_pgviews", *[], **{})
         with closing(connection.cursor()) as cur:
@@ -70,40 +71,57 @@ class ViewTestCase(TestCase):
             (count,) = cur.fetchone()
             self.assertEqual(count, 0)
 
-    def test_wildcard_projection(self):
+    def test_wildcard_projection(self) -> None:
         """Wildcard projections take all fields from a projected model."""
-        foo_user = auth.models.User.objects.create(username="foo", is_superuser=True)
+        foo_user = auth.models.User._default_manager.create(
+            username="foo", is_superuser=True
+        )
         foo_user.set_password("blah")
         foo_user.save()
 
-        foo_superuser = models.Superusers.objects.get(username="foo")
+        foo_superuser = models.Superusers._default_manager.get(
+            username="foo",  # type:ignore[misc]
+        )
 
+        # TODO: mypy doesn't pick up projected fields
         self.assertEqual(foo_user.id, foo_superuser.id)
-        self.assertEqual(foo_user.password, foo_superuser.password)
+        self.assertEqual(
+            foo_user.password,
+            foo_superuser.password,  # type:ignore[attr-defined]
+        )
 
-    def test_limited_projection(self):
+    def test_limited_projection(self) -> None:
         """A limited projection only creates the projected fields."""
         foo_user = auth.models.User.objects.create(username="foo", is_superuser=True)
         foo_user.set_password("blah")
         foo_user.save()
 
-        foo_simple = models.SimpleUser.objects.get(username="foo")
+        foo_simple = models.SimpleUser._default_manager.get(
+            username="foo",  # type:ignore[misc]
+        )
 
-        self.assertEqual(foo_simple.username, foo_user.username)
-        self.assertEqual(foo_simple.password, foo_user.password)
+        # TODO: mypy doesn't pick up projected fields
+        self.assertEqual(
+            foo_simple.username,  # type:ignore[attr-defined]
+            foo_user.username,
+        )
+        self.assertEqual(
+            foo_simple.password,  # type:ignore[attr-defined]
+            foo_user.password,
+        )
         self.assertFalse(getattr(foo_simple, "date_joined", False))
 
-    def test_related_delete(self):
+    def test_related_delete(self) -> None:
         """Test views do not interfere with deleting the models"""
         test_model = models.TestModel()
         test_model.name = "Bob"
         test_model.save()
         test_model.delete()
 
-    def test_materialized_view(self):
+    def test_materialized_view(self) -> None:
         """Test a materialized view works correctly"""
         self.assertEqual(
-            models.MaterializedRelatedView.objects.count(),
+            models.MaterializedRelatedView.objects.count(),  # type:ignore[misc]
             0,
             "Materialized view should not have anything",
         )
@@ -113,7 +131,7 @@ class ViewTestCase(TestCase):
         test_model.save()
 
         self.assertEqual(
-            models.MaterializedRelatedView.objects.count(),
+            models.MaterializedRelatedView.objects.count(),  # type:ignore[misc]
             0,
             "Materialized view should not have anything",
         )
@@ -121,7 +139,7 @@ class ViewTestCase(TestCase):
         models.MaterializedRelatedView.refresh()
 
         self.assertEqual(
-            models.MaterializedRelatedView.objects.count(),
+            models.MaterializedRelatedView.objects.count(),  # type:ignore[misc]
             1,
             "Materialized view should have updated",
         )
@@ -129,12 +147,12 @@ class ViewTestCase(TestCase):
         models.MaterializedRelatedViewWithIndex.refresh(concurrently=True)
 
         self.assertEqual(
-            models.MaterializedRelatedViewWithIndex.objects.count(),
+            models.MaterializedRelatedViewWithIndex.objects.count(),  # type:ignore[misc]
             1,
             "Materialized view should have updated concurrently",
         )
 
-    def test_signals(self):
+    def test_signals(self) -> None:
         expected = {
             models.MaterializedRelatedView: {
                 "status": "CREATED",
@@ -149,7 +167,7 @@ class ViewTestCase(TestCase):
         all_views_were_synced = [False]
 
         @receiver(view_synced)
-        def on_view_synced(sender, **kwargs):
+        def on_view_synced(sender: type[Any], **kwargs: Any) -> None:
             synced_views.append(sender)
             if sender in expected:
                 expected_kwargs = expected.pop(sender)
@@ -161,7 +179,7 @@ class ViewTestCase(TestCase):
                 )
 
         @receiver(all_views_synced)
-        def on_all_views_synced(sender, **kwargs):
+        def on_all_views_synced(sender: type[Any], **kwargs: Any) -> None:
             all_views_were_synced[0] = True
 
         call_command("sync_pgviews", update=False)
@@ -173,7 +191,7 @@ class ViewTestCase(TestCase):
 
 
 class DependantViewTestCase(TestCase):
-    def test_sync_depending_views(self):
+    def test_sync_depending_views(self) -> None:
         """Test the sync_pgviews command for views that depend on other views.
 
         This test drops `testspg_dependantview` and its dependencies
@@ -215,7 +233,7 @@ class DependantViewTestCase(TestCase):
             with self.assertRaises(Exception):
                 cur.execute("""SELECT name from testspg_dependantview;""")
 
-    def test_sync_depending_materialized_views(self):
+    def test_sync_depending_materialized_views(self) -> None:
         """Refresh views that depend on materialized views."""
         with closing(connection.cursor()) as cur:
             cur.execute(
