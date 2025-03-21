@@ -10,6 +10,14 @@ import pydantic
 import thelabdb.fields
 
 
+class UppercaseChar(models.Model):
+    value = thelabdb.fields.UppercaseCharField(max_length=25)
+
+
+class NullChar(models.Model):
+    value = thelabdb.fields.NullCharField(max_length=25)
+
+
 class EncryptedText(models.Model):
     value = thelabdb.fields.EncryptedTextField()
 
