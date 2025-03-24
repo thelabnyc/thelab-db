@@ -1502,14 +1502,14 @@ doc = ["sphinx"]
 
 [[package]]
 name = "thelab-typing"
-version = "0.1.0b4"
+version = "0.1.0b5"
 description = "A collection of utilities related to Python type checking"
 optional = false
 python-versions = ">=3.13"
 groups = ["main"]
 files = [
-    {file = "thelab_typing-0.1.0b4-py3-none-any.whl", hash = "sha256:58cdd991cb76a0e71f64cab55096460261d91605ec8e136be36ca7e9b7680e7d"},
-    {file = "thelab_typing-0.1.0b4.tar.gz", hash = "sha256:047f598e89b27b9c86a2b2e18e059fe144d10d0415ce87ce744943f8000ff423"},
+    {file = "thelab_typing-0.1.0b5-py3-none-any.whl", hash = "sha256:fe951f4b52997c317c9850140951ab4901411ff8d1e962b4a77a5d13024d2820"},
+    {file = "thelab_typing-0.1.0b5.tar.gz", hash = "sha256:16d90deda8ba167f7ca74c650aa592c318e1223da43c5e0b6ff44402fde66a79"},
 ]
 
 [package.dependencies]
@@ -1706,4 +1706,4 @@ bracex = ">=2.1.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "3727315bbf800862f088a42e7b5b034110df4e111bf4ab6f1a5a8aa5efcee5fd"
+content-hash = "77d5df6b487fa9828913492dd6600543505d2997cf194fa28392be615367bb3d"
