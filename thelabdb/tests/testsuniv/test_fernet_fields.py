@@ -118,7 +118,7 @@ class EncryptedTextQueryTest(TestCase):
         """Lookups are not allowed (they cannot succeed)."""
         self.model._default_manager.create(value=self.values[0])
         field_name = self.model._meta.get_field("value").__class__.__name__
-        lookups = set(dj_models.Field.class_lookups) - set(["isnull"])
+        lookups = set(dj_models.Field.class_lookups) - {"isnull"}
 
         for lookup in lookups:
             with self.assertRaises(FieldError) as cm:

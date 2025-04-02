@@ -47,7 +47,7 @@ class ViewSyncer:
         backlog: list[type[View]] = []
         for view_cls in models:
             skip = False
-            name = "{}.{}".format(view_cls._meta.app_label, view_cls.__name__)
+            name = f"{view_cls._meta.app_label}.{view_cls.__name__}"
             for dep in view_cls._dependencies:
                 if dep not in self.synced:
                     skip = True
@@ -91,7 +91,5 @@ class ViewSyncer:
                     msg = (
                         "exists with incompatible schema, " "--force required to update"
                     )
-                logger.info(
-                    "pgview %(python_name)s %(msg)s" % {"python_name": name, "msg": msg}
-                )
+                logger.info(f"pgview {name} {msg}")
         return backlog

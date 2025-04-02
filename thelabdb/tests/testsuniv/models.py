@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 from enum import IntEnum, StrEnum
-from typing import NewType, Optional, TypeVar
+from typing import NewType, TypeVar
 from uuid import UUID
 
 from django.db import models
@@ -101,7 +101,7 @@ class ProductAttributes(pydantic.BaseModel):
     first_available_dt: datetime = pydantic.Field(
         default_factory=lambda: datetime.now(tz=timezone.utc)
     )
-    discontinued_dt: Optional[datetime] = None
+    discontinued_dt: datetime | None = None
 
 
 class Product(models.Model):
