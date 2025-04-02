@@ -26,7 +26,7 @@ class Command(BaseCommand):
                 and hasattr(view_cls, "sql")
             ):
                 continue
-            python_name = "{}.{}".format(view_cls._meta.app_label, view_cls.__name__)
+            python_name = f"{view_cls._meta.app_label}.{view_cls.__name__}"
             status = clear_view(
                 connection,
                 view_cls._meta.db_table,

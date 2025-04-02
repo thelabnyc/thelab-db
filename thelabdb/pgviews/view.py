@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 from collections.abc import Collection, Iterable, Mapping
-from typing import Any, Literal, Optional, TypeVar, cast
+from typing import Any, Literal, Self, TypeVar, cast
 import copy
 import re
 
@@ -11,7 +11,6 @@ from django.core import exceptions
 from django.db import connection, models, transaction
 from django.db.backends.base.base import BaseDatabaseWrapper
 from django.db.models.query import QuerySet
-from typing_extensions import Self
 
 from .db import get_fields_by_name
 
@@ -101,7 +100,7 @@ def create_view(
     update: bool = True,
     force: bool = False,
     materialized: bool = False,
-    index: Optional[str] = None,
+    index: str | None = None,
 ) -> ViewOpResult:
     """
     Create a named view on a connection.
@@ -136,14 +135,14 @@ def create_view(
             # Detect schema conflict by copying the original view, attempting to
             # update this copy, and detecting errors.
             cursor.execute(
-                "CREATE TEMPORARY VIEW check_conflict AS SELECT * FROM {0};".format(
+                "CREATE TEMPORARY VIEW check_conflict AS SELECT * FROM {};".format(
                     view_name
                 )
             )
             try:
                 with transaction.atomic():
                     cursor.execute(
-                        "CREATE OR REPLACE TEMPORARY VIEW check_conflict AS {0};".format(
+                        "CREATE OR REPLACE TEMPORARY VIEW check_conflict AS {};".format(
                             view_query
                         )
                     )
@@ -154,12 +153,8 @@ def create_view(
 
         ret: ViewOpResult
         if materialized:
-            cursor.execute(
-                "DROP MATERIALIZED VIEW IF EXISTS {0} CASCADE;".format(view_name)
-            )
-            cursor.execute(
-                "CREATE MATERIALIZED VIEW {0} AS {1};".format(view_name, view_query)
-            )
+            cursor.execute(f"DROP MATERIALIZED VIEW IF EXISTS {view_name} CASCADE;")
+            cursor.execute(f"CREATE MATERIALIZED VIEW {view_name} AS {view_query};")
             if index is not None:
                 index_sub_name = "_".join([s.strip() for s in index.split(",")])
                 cursor.execute(
@@ -169,13 +164,11 @@ def create_view(
                 )
             ret = view_exists and "UPDATED" or "CREATED"
         elif not force_required:
-            cursor.execute(
-                "CREATE OR REPLACE VIEW {0} AS {1};".format(view_name, view_query)
-            )
+            cursor.execute(f"CREATE OR REPLACE VIEW {view_name} AS {view_query};")
             ret = view_exists and "UPDATED" or "CREATED"
         elif force:
-            cursor.execute("DROP VIEW IF EXISTS {0} CASCADE;".format(view_name))
-            cursor.execute("CREATE VIEW {0} AS {1};".format(view_name, view_query))
+            cursor.execute(f"DROP VIEW IF EXISTS {view_name} CASCADE;")
+            cursor.execute(f"CREATE VIEW {view_name} AS {view_query};")
             ret = "FORCED"
         else:
             ret = "FORCE_REQUIRED"
@@ -197,11 +190,9 @@ def clear_view(
     cursor = cursor_wrapper.cursor
     try:
         if materialized:
-            cursor.execute(
-                "DROP MATERIALIZED VIEW IF EXISTS {0} CASCADE".format(view_name)
-            )
+            cursor.execute(f"DROP MATERIALIZED VIEW IF EXISTS {view_name} CASCADE")
         else:
-            cursor.execute("DROP VIEW IF EXISTS {0} CASCADE".format(view_name))
+            cursor.execute(f"DROP VIEW IF EXISTS {view_name} CASCADE")
     finally:
         cursor_wrapper.close()
     return "DROPPED"
@@ -350,14 +341,12 @@ class MaterializedView(View):
         try:
             if self._concurrent_index is not None and concurrently:
                 cursor.execute(
-                    "REFRESH MATERIALIZED VIEW CONCURRENTLY {0}".format(
+                    "REFRESH MATERIALIZED VIEW CONCURRENTLY {}".format(
                         self._meta.db_table
                     )
                 )
             else:
-                cursor.execute(
-                    "REFRESH MATERIALIZED VIEW {0}".format(self._meta.db_table)
-                )
+                cursor.execute(f"REFRESH MATERIALIZED VIEW {self._meta.db_table}")
         finally:
             cursor_wrapper.close()
 

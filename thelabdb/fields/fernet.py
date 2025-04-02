@@ -1,4 +1,5 @@
-from typing import Any, Callable, Optional, TypeVar
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 from cryptography.fernet import Fernet, MultiFernet
 from django.conf import settings
@@ -85,7 +86,7 @@ class EncryptedField(models.Field[_ST, _GT]):
 
     def from_db_value(
         self,
-        value: Optional[bytes],
+        value: bytes | None,
         expression: Col,
         connection: BaseDatabaseWrapper,
         *args: Any,
@@ -181,10 +182,10 @@ class EncryptedIntegerField(
 
     def get_db_prep_value(
         self,
-        value: Optional[int],
+        value: int | None,
         connection: BaseDatabaseWrapper,
         prepared: bool = False,
-    ) -> Optional[int]:
+    ) -> int | None:
         # This gets around calling DatabaseOperations.adapt_integerfield_value
         # when using Psycopg3
         return models.Field.get_db_prep_value(  # type:ignore[no-any-return]

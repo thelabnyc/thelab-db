@@ -110,7 +110,7 @@ class NullCharField(models.CharField[_ST, _GT]):
         """
         deconstruct() is needed by Django's migration framework
         """
-        name, path, args, kwargs = super(NullCharField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         del kwargs["null"]
         del kwargs["blank"]
         return name, path, args, kwargs

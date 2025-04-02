@@ -28,33 +28,33 @@ class SimpleUser(view.View):
 
 
 class RelatedView(view.ReadOnlyView):
-    sql = """SELECT id AS model_id, id FROM {}""".format(TestModel._meta.db_table)
+    sql = f"""SELECT id AS model_id, id FROM {TestModel._meta.db_table}"""
     model = models.ForeignKey(TestModel, on_delete=models.CASCADE)
 
 
 class MaterializedRelatedView(view.ReadOnlyMaterializedView):
-    sql = """SELECT id AS model_id, id FROM {}""".format(TestModel._meta.db_table)
+    sql = f"""SELECT id AS model_id, id FROM {TestModel._meta.db_table}"""
     model = models.ForeignKey(TestModel, on_delete=models.DO_NOTHING)
 
 
 class DependantView(view.ReadOnlyView):
     dependencies = ("testspg.RelatedView",)
-    sql = """SELECT model_id from {};""".format(RelatedView._meta.db_table)
+    sql = f"""SELECT model_id from {RelatedView._meta.db_table};"""
 
 
 class DependantMaterializedView(view.ReadOnlyMaterializedView):
     dependencies = ("testspg.MaterializedRelatedView",)
-    sql = """SELECT model_id from {};""".format(MaterializedRelatedView._meta.db_table)
+    sql = f"""SELECT model_id from {MaterializedRelatedView._meta.db_table};"""
 
 
 class MaterializedRelatedViewWithIndex(view.ReadOnlyMaterializedView):
     concurrent_index = "id"
-    sql = """SELECT id AS model_id, id FROM {}""".format(TestModel._meta.db_table)
+    sql = f"""SELECT id AS model_id, id FROM {TestModel._meta.db_table}"""
     model = models.ForeignKey(TestModel, on_delete=models.DO_NOTHING)
 
 
 class CustomSchemaView(view.ReadOnlyView):
-    sql = """SELECT id AS model_id, id FROM {}""".format(TestModel._meta.db_table)
+    sql = f"""SELECT id AS model_id, id FROM {TestModel._meta.db_table}"""
     model = models.ForeignKey(TestModel, on_delete=models.DO_NOTHING)
 
     class Meta:
