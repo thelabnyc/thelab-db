@@ -1,5 +1,22 @@
 # Changes
 
+## v0.5.0 (2025-04-03)
+
+### Feat
+
+- support Django 5.2. Drop Django 5.0
+
+### Fix
+
+- **deps**: update dependency pydantic to ^2.11.1
+- **deps**: update dependency pydantic to ^2.11.0
+- **deps**: update dependency thelab-typing to ^0.1.0-beta.5
+- **deps**: update dependency thelab-typing to ^0.1.0-beta.4
+
+### Refactor
+
+- add pyupgrade / django-upgrade precommit hooks
+
 ## v0.4.0 (2025-03-21)
 
 ### Feat
