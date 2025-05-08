@@ -45,6 +45,6 @@ repos:
       - id: markdownlint
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.6.0
+    rev: v4.6.1
     hooks:
       - id: commitizen
