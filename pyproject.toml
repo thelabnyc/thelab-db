@@ -28,7 +28,7 @@ thelab-typing = "^0.1.0"
 flake8 = "7.2.0"
 coverage = "7.8.0"
 tox = "4.25.0"
-psycopg = {extras = ["binary"], version = "3.2.7"}
+psycopg = {extras = ["binary"], version = "3.2.8"}
 mypy = "1.15.0"
 django-stubs = "5.2.0"
 types-cryptography = "^3.3.23.2"
