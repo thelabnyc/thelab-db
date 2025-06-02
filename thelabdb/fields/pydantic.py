@@ -50,7 +50,7 @@ class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
     Essentially, a much more type-safe JSON field.
     """
 
-    description = _("A Pydantic model stored as JSON in the DB")
+    description = "A Pydantic model stored as JSON in the DB"
 
     model_cls: type[T]
     coerce_invalid_data: Callable[[Any], Any] | None
