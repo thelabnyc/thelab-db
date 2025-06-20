@@ -30,7 +30,7 @@ coverage = "7.9.1"
 tox = "4.27.0"
 psycopg = {extras = ["binary"], version = "3.2.9"}
 mypy = "1.16.1"
-django-stubs = "5.2.0"
+django-stubs = "5.2.1"
 types-cryptography = "^3.3.23.2"
 types-psycopg2 = "^2.9.21.20241019"
 
