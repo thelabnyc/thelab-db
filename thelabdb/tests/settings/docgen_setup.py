@@ -1,6 +1,6 @@
-import django_stubs_ext
-
-django_stubs_ext.monkeypatch()
+from django.apps import apps
+from django.conf import settings
+import django
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 INSTALLED_APPS = [
@@ -16,10 +16,11 @@ INSTALLED_APPS = [
 
 SECRET_KEY = "secret"
 
-setup = None
-from django.apps import apps  # noqa
-from django.conf import settings  # noqa
-import django  # noqa
-
 if not apps.ready and not settings.configured:
     django.setup()
+
+import django_stubs_ext  # NOQA
+
+django_stubs_ext.monkeypatch()
+
+setup = None
