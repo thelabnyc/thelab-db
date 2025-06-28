@@ -5,7 +5,7 @@ stages:
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  POETRY_CACHE_DIR: "$CI_PROJECT_DIR/.cache/poetry"
+  UV_CACHE_DIR: "$CI_PROJECT_DIR/.cache/uv"
   PYIMAGE: py313
 
 .rules_mrs_and_protected:
@@ -39,17 +39,13 @@ variables:
 .dev_dependency_job: &dev_dependency_job
   <<: *base_job
   before_script:
-    # Setup Poetry to allow caching between jobs
-    - poetry config cache-dir $POETRY_CACHE_DIR
-    - poetry config virtualenvs.create true
-    - poetry config virtualenvs.in-project true
     # Install dependencies
-    - poetry install
+    - uv sync
   cache:
     key: devdependencies-${PYIMAGE}
     paths:
       - .cache/pip/
-      - .cache/poetry/
+      - .cache/uv/
       - .venv/
 
 include:
@@ -65,7 +61,6 @@ include:
     inputs:
       image: "registry.gitlab.com/thelabnyc/python:${PYIMAGE}"
 
-
 test:sqlite: &test_sqlite
   <<: *dev_dependency_job
   rules:
@@ -80,7 +75,7 @@ test:sqlite: &test_sqlite
       - PYIMAGE: py313
         TOX_SKIP_ENV: "^(?!py313-)"
   script:
-    - poetry run tox
+    - uv run tox
 
 test:postgres:
   <<: *test_sqlite
@@ -88,7 +83,7 @@ test:postgres:
     POSTGRES_DB: postgres
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: ""
-    POSTGRES_HOST_AUTH_METHOD: 'trust'
+    POSTGRES_HOST_AUTH_METHOD: "trust"
     DJANGO_SETTINGS_MODULE: thelabdb.tests.settings.pg
     TEST_PKGS: thelabdb.tests.testsuniv thelabdb.tests.testspg
   services:
