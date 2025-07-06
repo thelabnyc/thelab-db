@@ -25,7 +25,7 @@ Documentation = "https://thelabnyc.gitlab.io/thelab-db"
 [dependency-groups]
 dev = [
     "flake8==7.3.0",
-    "coverage (==7.9.1)",
+    "coverage (==7.9.2)",
     "tox==4.27.0",
     "psycopg[binary] (==3.2.9)",
     "mypy (==1.16.1)",
