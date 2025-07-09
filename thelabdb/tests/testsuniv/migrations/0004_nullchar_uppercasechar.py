@@ -6,7 +6,6 @@ import thelabdb.fields.char
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("testsuniv", "0003_store_inventory"),
     ]

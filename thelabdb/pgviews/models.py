@@ -88,8 +88,6 @@ class ViewSyncer:
                 elif status == "FORCED":
                     msg = "forced overwrite of existing schema"
                 elif status == "FORCE_REQUIRED":
-                    msg = (
-                        "exists with incompatible schema, " "--force required to update"
-                    )
+                    msg = "exists with incompatible schema, --force required to update"
                 logger.info(f"pgview {name} {msg}")
         return backlog

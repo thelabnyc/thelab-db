@@ -7,7 +7,6 @@ import thelabdb.tests.testsuniv.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("testsuniv", "0001_initial"),
     ]
