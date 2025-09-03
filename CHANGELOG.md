@@ -1,5 +1,19 @@
 # Changes
 
+## v0.5.1 (2025-09-03)
+
+### Fix
+
+- update docker image tag format
+- **deps**: update dependency pydantic to ^2.11.3
+- **deps**: update dependency thelab-typing to ^0.1.0
+- **deps**: update dependency pydantic to ^2.11.2
+
+### Refactor
+
+- migrate black/flake8 -> ruff
+- migrate from poetry -> uv
+
 ## v0.5.0 (2025-04-03)
 
 ### Feat
