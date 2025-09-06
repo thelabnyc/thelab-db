@@ -807,14 +807,14 @@ wheels = [
 
 [[package]]
 name = "thelab-typing"
-version = "0.1.0"
+version = "0.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/32/4e/de6fc2349d33ba45ec6815afad81dbcf40b7640541c9bc606818fd740c03/thelab_typing-0.1.0.tar.gz", hash = "sha256:8a17997c802b5b2c4626f21121f55fdde03846213d3d9d88e9a45dc76935e18e", size = 38344, upload-time = "2025-04-03T14:58:01.829Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/65/6b/8afec3e2ed7f965d73a469663a6cb4693111b3fcd7db7ae46df7654cff93/thelab_typing-0.1.1.tar.gz", hash = "sha256:1271e0e1c7ebef57ba5f01e4e26c89efa2eec106bfe4cd93069caa99cf5fce4c", size = 67244, upload-time = "2025-09-03T20:13:21.77Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6d/b1/ecf7cfb7a60761f6fe4c9c7743373952cc07c88a49011e29d1df93a74651/thelab_typing-0.1.0-py3-none-any.whl", hash = "sha256:68fc14fff76952a85f58f7c3ec4d78599a61c305ac87698248bebfd9be6e5dad", size = 28120, upload-time = "2025-04-03T14:58:00.579Z" },
+    { url = "https://files.pythonhosted.org/packages/7a/1c/6d69c146b98f9e92e92749164291790fa6c6f1207ad7b930190799b3dfe3/thelab_typing-0.1.1-py3-none-any.whl", hash = "sha256:3461615f9f90fc8f6c716031ba26748841a4eb746090dfa11bac27cea24708c3", size = 29148, upload-time = "2025-09-03T20:13:20.319Z" },
 ]
 
 [[package]]
@@ -855,7 +855,7 @@ requires-dist = [
     { name = "django", specifier = ">=4.2.0" },
     { name = "django-stubs-ext", specifier = ">=5.2.2,<6" },
     { name = "pydantic", specifier = ">=2.11.7,<3" },
-    { name = "thelab-typing", specifier = ">=0.1.0,<0.2" },
+    { name = "thelab-typing", specifier = ">=0.1.1,<0.2" },
 ]
 
 [package.metadata.requires-dev]
