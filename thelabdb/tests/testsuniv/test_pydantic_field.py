@@ -1,6 +1,5 @@
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import cast
 from unittest.mock import Mock
 from uuid import UUID
 
@@ -8,8 +7,6 @@ from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models.fields.json import KT
 from django.test import TestCase
-
-import thelabdb.fields
 
 from .models import Color, Product, ProductAttributes, Size, StoreID
 
@@ -135,10 +132,7 @@ class PydanticFieldTest(TestCase):
         coerce_fn = Mock()
         coerce_fn.return_value = self.valid_attrs_dict
 
-        attrs_field = cast(
-            thelabdb.fields.PydanticField[ProductAttributes],
-            Product._meta.get_field("attrs"),
-        )
+        attrs_field = Product._meta.get_field("attrs")
         attrs_field.coerce_invalid_data = coerce_fn
 
         Product._default_manager.create(attrs=self.invalid_attrs)
@@ -152,10 +146,7 @@ class PydanticFieldTest(TestCase):
 
     def test_select_invalid_forced(self) -> None:
         """Allows force loading invalid data"""
-        attrs_field = cast(
-            thelabdb.fields.PydanticField[ProductAttributes],
-            Product._meta.get_field("attrs"),
-        )
+        attrs_field = Product._meta.get_field("attrs")
         attrs_field.force_load_invalid_data = True
 
         Product._default_manager.create(attrs=self.invalid_attrs)
