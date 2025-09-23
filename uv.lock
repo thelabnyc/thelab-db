@@ -902,7 +902,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cryptography", specifier = ">=45.0.7" },
+    { name = "cryptography", specifier = ">=46.0.1" },
     { name = "django", specifier = ">=4.2.0" },
     { name = "django-stubs-ext", specifier = ">=5.2.5,<6" },
     { name = "pydantic", specifier = ">=2.11.9,<3" },
