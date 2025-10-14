@@ -1003,7 +1003,7 @@ dev = [
     { name = "mypy", specifier = "==1.18.2" },
     { name = "psycopg", extras = ["binary"], specifier = "==3.2.10" },
     { name = "pymdown-extensions", specifier = ">=10.16.1,<11" },
-    { name = "ruff", specifier = ">=0.13.3" },
+    { name = "ruff", specifier = ">=0.14.0" },
     { name = "tox", specifier = "==4.30.3" },
     { name = "tox-uv", specifier = ">=1.28.0" },
     { name = "types-cryptography", specifier = ">=3.3.23.2,<4" },
