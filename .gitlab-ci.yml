@@ -6,7 +6,7 @@ stages:
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   UV_CACHE_DIR: "$CI_PROJECT_DIR/.cache/uv"
-  PYIMAGE: py313
+  PYIMAGE: "3.14"
 
 .rules_mrs_and_protected:
   - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -72,8 +72,10 @@ test:sqlite: &test_sqlite
     TEST_PKGS: thelabdb.tests.testsuniv
   parallel:
     matrix:
-      - PYIMAGE: py313
+      - PYIMAGE: "3.13"
         TOX_SKIP_ENV: "^(?!py313-)"
+      - PYIMAGE: "3.14"
+        TOX_SKIP_ENV: "^(?!py314-)"
   script:
     - uv run tox
 
