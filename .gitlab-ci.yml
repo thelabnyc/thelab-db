@@ -49,6 +49,7 @@ variables:
       - .venv/
 
 include:
+  - component: gitlab.com/thelabnyc/thelab-ci-components/review@0.6.0
   - component: gitlab.com/thelabnyc/thelab-ci-components/precommit@0.5.1
     rules:
       - if: $CI_PIPELINE_SOURCE == "schedule"
