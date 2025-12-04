@@ -10,7 +10,7 @@ readme = "README.md"
 dependencies = [
     "Django (>=4.2.0)",
     "cryptography (>=46.0.3)",
-    "django-stubs-ext (>=5.2.7,<6)",
+    "django-stubs-ext (>=5.2.8,<6)",
     "pydantic (>=2.12.5,<3)",
     "thelab-typing (>=0.1.1,<0.2)",
 ]
