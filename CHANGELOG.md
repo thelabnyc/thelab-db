@@ -1,5 +1,38 @@
 # Changes
 
+## v0.6.0 (2025-12-05)
+
+### Feat
+
+- support Python 3.14
+
+### Fix
+
+- loosen thelab-typing version spec
+- **deps**: update dependency django-stubs-ext to >=5.2.8,<6
+- **deps**: update dependency pydantic to >=2.12.5,<3
+- **deps**: update dependency pydantic to >=2.12.4,<3
+- **deps**: update dependency pydantic to >=2.12.3,<3
+- **deps**: update dependency cryptography to >=46.0.3
+- **deps**: update dependency pydantic to >=2.12.2,<3
+- **deps**: update dependency pydantic to >=2.12.0,<3
+- **deps**: update dependency django-stubs-ext to >=5.2.7,<6
+- **deps**: update dependency django-stubs-ext to >=5.2.6,<6
+- **deps**: update dependency pydantic to >=2.11.10,<3
+- **deps**: update dependency cryptography to >=46.0.2
+- **deps**: update dependency cryptography to >=46.0.1
+- **deps**: update dependency pydantic to >=2.11.9,<3
+- **deps**: update dependency pydantic to >=2.11.8,<3
+- **deps**: update dependency django-stubs-ext to >=5.2.5,<6
+- **deps**: update dependency django-stubs-ext to >=5.2.4,<6
+- **deps**: update dependency thelab-typing to >=0.1.1,<0.2
+- **deps**: update dependency cryptography to >=45.0.7
+- **deps**: update dependency django-stubs-ext to >=5.2.2,<6
+- **deps**: update dependency pydantic to >=2.11.7,<3
+- **deps**: update dependency cryptography to >=45.0.6
+- **deps**: update dependency cryptography to >=44.0.3
+- prevent renovate from pointing all URLs at gitlab
+
 ## v0.5.1 (2025-09-03)
 
 ### Fix
