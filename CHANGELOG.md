@@ -1,5 +1,12 @@
 # Changes
 
+## v0.6.1 (2025-12-15)
+
+### Fix
+
+- widen thelab-typing version spec
+- **deps**: update dependency thelab-typing to >=0.2.0,<0.3
+
 ## v0.6.0 (2025-12-05)
 
 ### Feat
