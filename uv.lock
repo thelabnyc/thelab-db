@@ -1052,7 +1052,7 @@ dev = [
     { name = "mkdocs-section-index", specifier = ">=0.3.10,<0.4" },
     { name = "mypy", specifier = "==1.19.0" },
     { name = "psycopg", extras = ["binary"], specifier = "==3.3.2" },
-    { name = "pymdown-extensions", specifier = ">=10.19,<11" },
+    { name = "pymdown-extensions", specifier = ">=10.19.1,<11" },
     { name = "ruff", specifier = ">=0.14.9" },
     { name = "tox", specifier = ">=4.32.0" },
     { name = "tox-uv", specifier = ">=1.29.0" },
