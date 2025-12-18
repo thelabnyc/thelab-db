@@ -1037,7 +1037,7 @@ requires-dist = [
     { name = "django", specifier = ">=5.2" },
     { name = "django-stubs-ext", specifier = ">=5.2.8,<6" },
     { name = "pydantic", specifier = ">=2.12.5,<3" },
-    { name = "thelab-typing", specifier = ">=0.2.0,<2.0.0" },
+    { name = "thelab-typing", specifier = ">=1.0.1,<2.0.0" },
 ]
 
 [package.metadata.requires-dev]
