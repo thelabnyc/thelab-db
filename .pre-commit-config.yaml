@@ -48,3 +48,4 @@ repos:
     rev: v4.12.1
     hooks:
       - id: commitizen
+        stages: [commit-msg]
