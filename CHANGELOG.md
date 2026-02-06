@@ -1,5 +1,18 @@
 # Changes
 
+## v0.7.0 (2026-02-06)
+
+### Feat
+
+- add AtomicMutatingRequestsMiddleware
+
+### Fix
+
+- **deps**: update dependency cryptography to >=46.0.4
+- **deps**: update dependency django-stubs-ext to >=5.2.9,<6
+- **deps**: update dependency thelab-typing to >=1.0.1,<2.0.0
+- **deps**: update dependency django to >=5.2
+
 ## v0.6.1 (2025-12-15)
 
 ### Fix
