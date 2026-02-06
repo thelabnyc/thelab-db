@@ -36,7 +36,7 @@ DJANGO_SETTINGS_MODULE=thelabdb.tests.settings.sqlite uv run python manage.py te
 uv run mypy thelabdb/
 
 # Run pre-commit hooks on all files
-uv run pre-commit run --all-files
+uv run prek run --all-files
 ```
 
 ### Documentation
@@ -77,5 +77,5 @@ make docs_build
 
 - Strict mypy type checking is enforced (see `pyproject.toml` for config)
 - All code must be type-hinted
-- Pre-commit hooks validate commits (ruff, isort, pyupgrade, django-upgrade, commitizen)
+- Pre-commit (`prek`) hooks validate commits (ruff, isort, pyupgrade, django-upgrade, commitizen)
 - Python 3.13+ syntax required
