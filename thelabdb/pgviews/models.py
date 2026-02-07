@@ -1,9 +1,10 @@
 from typing import Any
 import logging
 
-from django.apps import apps
-from django.db import connection
+from django.db import connection as default_connection
+from django.db.backends.base.base import BaseDatabaseWrapper
 
+from .migrate import get_view_classes
 from .signals import all_views_synced, view_synced
 from .view import MaterializedView, View, create_view
 
@@ -11,21 +12,19 @@ logger = logging.getLogger(__name__)
 
 
 class ViewSyncer:
-    def run(self, force: bool, update: bool, **options: Any) -> None:
+    def run(
+        self,
+        force: bool,
+        update: bool,
+        connection: BaseDatabaseWrapper = default_connection,
+        **options: Any,
+    ) -> None:
         self.synced: list[str] = []
-        backlog: list[type[View]] = []
-        for view_cls in apps.get_models():
-            if not (
-                isinstance(view_cls, type)
-                and issubclass(view_cls, View)
-                and hasattr(view_cls, "sql")
-            ):
-                continue
-            backlog.append(view_cls)
+        backlog: list[type[View]] = list(get_view_classes())
         loop = 0
         while len(backlog) > 0 and loop < 10:
             loop += 1
-            backlog = self.run_backlog(backlog, force, update)
+            backlog = self.run_backlog(backlog, force, update, connection)
 
         if loop >= 10:
             logger.warn(
@@ -35,7 +34,11 @@ class ViewSyncer:
             all_views_synced.send(sender=None)
 
     def run_backlog(
-        self, models: list[type[View]], force: bool, update: bool
+        self,
+        models: list[type[View]],
+        force: bool,
+        update: bool,
+        connection: BaseDatabaseWrapper = default_connection,
     ) -> list[type[View]]:
         """Installs the list of models given from the previous backlog
 
@@ -63,7 +66,7 @@ class ViewSyncer:
                     view_cls.sql,
                     update=update,
                     force=force,
-                    materialized=isinstance(view_cls(), MaterializedView),
+                    materialized=issubclass(view_cls, MaterializedView),
                     index=view_cls._concurrent_index,
                 )
                 view_synced.send(

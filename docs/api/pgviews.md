@@ -14,6 +14,25 @@
 ::: thelabdb.pgviews.view.ReadOnlyMaterializedView
     :docstring:
 
+## App Configuration
+
+::: thelabdb.pgviews.apps.ViewConfig
+    :docstring:
+
+## Migration Utilities
+
+::: thelabdb.pgviews.migrate.drop_affected_views
+    :docstring:
+
+::: thelabdb.pgviews.migrate.get_affected_tables
+    :docstring:
+
+::: thelabdb.pgviews.migrate.get_view_dependency_tables
+    :docstring:
+
+::: thelabdb.pgviews.migrate.get_view_classes
+    :docstring:
+
 ## Signals
 
 ::: thelabdb.pgviews.signals.view_synced
