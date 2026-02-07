@@ -125,6 +125,33 @@ This will take all fields on `myapp.Customer` and apply them to
 
 ## Features
 
+### Automatic View Management During Migrations
+
+When you run `python manage.py migrate`, views are automatically managed:
+
+1. **Pre-migrate**: Views that depend on tables being altered are dropped before migrations run.
+2. **Post-migrate**: All views are recreated after all apps have finished migrating.
+
+This means you no longer need to manually run `clear_pgviews` before migrating. The pre-migrate handler analyzes the migration plan and drops only the views whose SQL references tables affected by pending migrations.
+
+#### Conservative Mode
+
+If any migration contains a `RunSQL` or `RunPython` operation, the system cannot determine which tables will be affected. In this case, **all** views are dropped as a safety measure (conservative mode). This ensures migrations never fail due to view dependencies, even with custom SQL operations.
+
+#### Disabling Automatic View Dropping
+
+If you prefer to manage view dropping manually, set the following in your Django settings:
+
+```py
+PGVIEWS_DROP_BEFORE_MIGRATE = False
+```
+
+When disabled, you can use the `clear_pgviews` management command to manually drop views before running migrations.
+
+#### Multi-Database Support
+
+The pre-migrate and post-migrate handlers are database-aware. When migrating multiple databases, each database's views are managed independently.
+
 ### Updating Views
 
 Sometimes your models change and you need your Database Views to reflect the new
