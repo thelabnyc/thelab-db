@@ -1,5 +1,11 @@
 # Changes
 
+## v0.8.0b0 (2026-02-07)
+
+### Feat
+
+- add pre_migrate signal handler for smart view management
+
 ## v0.7.0 (2026-02-06)
 
 ### Feat
