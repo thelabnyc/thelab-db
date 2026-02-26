@@ -37,7 +37,7 @@ dev = [
     "mypy (==1.19.1)",
     "django-stubs (==5.2.9)",
     "types-cryptography (>=3.3.23.2,<4)",
-    "types-psycopg2 (>=2.9.21.20251012,<3)",
+    "types-psycopg2 (>=2.9.21.20260223,<3)",
     "tox-uv (>=1.29.0)",
     "mkdocs (>=1.6.1,<2)",
     "pymdown-extensions (>=10.21,<11)",
