@@ -1,3 +1,7 @@
+default:
+  tags:
+    - thelab-arm64
+
 stages:
   - test
   - docs
