@@ -1118,7 +1118,7 @@ dev = [
     { name = "pymdown-extensions", specifier = ">=10.21.2,<11" },
     { name = "ruff", specifier = ">=0.15.10" },
     { name = "tox", specifier = ">=4.52.1" },
-    { name = "tox-uv", specifier = ">=1.35.0" },
+    { name = "tox-uv", specifier = ">=1.35.1" },
     { name = "types-cryptography", specifier = ">=3.3.23.2,<4" },
     { name = "types-psycopg2", specifier = ">=2.9.21.20260408,<3" },
 ]
