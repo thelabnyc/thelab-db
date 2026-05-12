@@ -1126,7 +1126,7 @@ dev = [
     { name = "tox", specifier = ">=4.53.1" },
     { name = "tox-uv", specifier = ">=1.35.2" },
     { name = "types-cryptography", specifier = ">=3.3.23.2,<4" },
-    { name = "types-psycopg2", specifier = ">=2.9.21.20260508,<3" },
+    { name = "types-psycopg2", specifier = ">=2.9.21.20260509,<3" },
 ]
 
 [[package]]
