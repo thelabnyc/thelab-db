@@ -6,8 +6,10 @@ from uuid import UUID
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models.fields.json import KT
+from django.forms import JSONField as DjangoJSONField
 from django.test import TestCase
 
+from ...fields.pydantic import PydanticJSONFormField
 from .models import Color, Product, ProductAttributes, Size, StoreID
 
 
@@ -159,3 +161,43 @@ class PydanticFieldTest(TestCase):
             self.assertEqual(p.attrs.model_dump(), self.invalid_attrs_dict)
         finally:
             attrs_field.force_load_invalid_data = False
+
+    def test_formfield_prepare_value(self) -> None:
+        """Form field can serialize Pydantic models without an error"""
+        attrs_field = Product._meta.get_field("attrs")
+        form_field = attrs_field.formfield()
+        assert form_field is not None
+        prepared = form_field.prepare_value(self.valid_attrs)
+        self.assertJSONEqual(prepared, self.valid_attrs_dict)
+
+    def test_formfield_prepare_value_list(self) -> None:
+        """Form field can serialize lists of Pydantic models"""
+        attrs_field = Product._meta.get_field("attrs")
+        form_field = attrs_field.formfield()
+        assert form_field is not None
+        prepared = form_field.prepare_value([self.valid_attrs])
+        self.assertJSONEqual(prepared, [self.valid_attrs_dict])
+
+    def test_formfield_prepare_value_none(self) -> None:
+        """Form field handles None correctly"""
+        attrs_field = Product._meta.get_field("attrs")
+        form_field = attrs_field.formfield()
+        assert form_field is not None
+        prepared = form_field.prepare_value(None)
+        self.assertEqual(prepared, "null")
+
+    def test_formfield_prepare_value_nested_dict(self) -> None:
+        """Form field recursively serializes Pydantic models inside dicts"""
+        attrs_field = Product._meta.get_field("attrs")
+        form_field = attrs_field.formfield()
+        assert form_field is not None
+        prepared = form_field.prepare_value({"nested": self.valid_attrs})
+        self.assertJSONEqual(prepared, {"nested": self.valid_attrs_dict})
+
+    def test_formfield_respects_custom_form_class(self) -> None:
+        """Custom form_class passes to formfield()"""
+        attrs_field = Product._meta.get_field("attrs")
+        custom_field = attrs_field.formfield(form_class=DjangoJSONField)
+        assert custom_field is not None
+        self.assertIsInstance(custom_field, DjangoJSONField)
+        self.assertNotIsInstance(custom_field, PydanticJSONFormField)
