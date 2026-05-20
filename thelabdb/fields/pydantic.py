@@ -7,6 +7,9 @@ from django.db.backends.base.base import BaseDatabaseWrapper
 from django.db.models import Model, expressions
 from django.db.models.expressions import Expression
 from django.db.models.fields.json import JSONField
+from django.forms import ChoiceField as DjangoChoiceField
+from django.forms import Field as DjangoFormField
+from django.forms import JSONField as DjangoJSONField
 from django.utils.translation import gettext_lazy as _
 from django_stubs_ext import StrOrPromise
 from thelabtyping.result import Err, Ok, Result
@@ -39,6 +42,21 @@ def _validate[T: pydantic.BaseModel](
         return Ok(model_cls.model_validate(value))
     except pydantic_core.ValidationError as e:
         return Err(e)
+
+
+def _dump_pydantic_form_value(value: Any) -> Any:
+    if isinstance(value, pydantic.BaseModel):
+        return value.model_dump(mode="json")
+    if isinstance(value, (list, tuple)):
+        return [_dump_pydantic_form_value(item) for item in value]
+    if isinstance(value, dict):
+        return {k: _dump_pydantic_form_value(v) for k, v in value.items()}
+    return value
+
+
+class PydanticJSONFormField(DjangoJSONField):
+    def prepare_value(self, value: Any) -> Any:
+        return super().prepare_value(_dump_pydantic_form_value(value))
 
 
 class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
@@ -174,7 +192,24 @@ class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
         # Use the dumped value to do all the upstream validation.
         super().validate(dumped_val, model_instance)
 
+    def formfield(
+        self,
+        form_class: type[DjangoFormField] | None = None,
+        choices_form_class: type[DjangoChoiceField] | None = None,
+        **kwargs: Any,
+    ) -> DjangoFormField | None:
+        """
+        Return a form field that knows how to serialize Pydantic models.
+        """
+
+        return super().formfield(
+            form_class=form_class or PydanticJSONFormField,
+            choices_form_class=choices_form_class,
+            **kwargs,
+        )
+
 
 __all__ = [
     "PydanticField",
+    "PydanticJSONFormField",
 ]
