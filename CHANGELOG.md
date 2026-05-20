@@ -1,10 +1,25 @@
 # Changes
 
-## v0.8.0b0 (2026-02-07)
+## v0.8.0 (2026-05-20)
 
 ### Feat
 
+- add `PydanticJSONFormField` for serializing Pydantic models in forms
 - add pre_migrate signal handler for smart view management
+
+### Fix
+
+- **deps**: update dependency pydantic to >=2.13.4,<3
+- **deps**: update dependency cryptography to >=48.0.0
+- **deps**: update dependency cryptography to >=47.0.0
+- **deps**: update dependency pydantic to >=2.13.3,<3
+- **deps**: update dependency pydantic to >=2.13.2,<3
+- **deps**: update dependency pydantic to >=2.13.1,<3
+- **deps**: update dependency pydantic to >=2.13.0,<3
+- **deps**: update dependency cryptography to >=46.0.7
+- **deps**: update dependency thelab-typing to >=1.0.2,<2.0.0
+- **deps**: update dependency cryptography to >=46.0.6
+- **deps**: update dependency cryptography to >=46.0.5
 
 ## v0.7.0 (2026-02-06)
 
