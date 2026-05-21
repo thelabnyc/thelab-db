@@ -94,7 +94,7 @@ test:postgres:
     DJANGO_SETTINGS_MODULE: thelabdb.tests.settings.pg
     TEST_PKGS: thelabdb.tests.testsuniv thelabdb.tests.testspg
   services:
-    - postgres:latest@sha256:7aba8c66107ee218ddbaacb30eae46d774bf5e34ab77a917be819b4e227493c4
+    - postgres:latest@sha256:8ff36f3c66371cba71d20ceedccfc3de9669a68737607888c4ef0af93abe8e39
   # Only get coverage from postgres job since the sqlite job skips the postgres
   # test, which makes coverage seem lower than it actually is.
   coverage: '/^TOTAL.+?(\d+\%)$/'
