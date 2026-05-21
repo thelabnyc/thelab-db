@@ -10,7 +10,7 @@ readme = "README.md"
 dependencies = [
     "Django (>=5.2)",
     "cryptography (>=48.0.0)",
-    "django-stubs-ext (>=5.2.9,<6)",
+    "django-stubs-ext (>=5.2.9,<7)",
     "pydantic (>=2.13.4,<3)",
     "thelab-typing (>=1.0.2,<2.0.0)",
 ]
@@ -35,7 +35,7 @@ dev = [
     "tox (>=4.54.0)",
     "psycopg[binary] (==3.3.4)",
     "mypy (==1.20.2)",
-    "django-stubs (==5.2.9)",
+    "django-stubs (==6.0.4)",
     "types-cryptography (>=3.3.23.2,<4)",
     "types-psycopg2 (>=2.9.21.20260518,<3)",
     "tox-uv (>=1.35.2)",

@@ -244,7 +244,7 @@ class ViewMeta(models.base.ModelBase):
     def add_to_class(self, name: str, value: Any) -> None:
         if name == "_base_manager":
             return
-        super().add_to_class(name, value)  # type:ignore[misc]
+        super().add_to_class(name, value)
 
 
 class BaseManagerMeta:

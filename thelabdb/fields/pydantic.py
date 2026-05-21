@@ -202,11 +202,12 @@ class PydanticField[T: pydantic.BaseModel](JSONField[T, T]):
         Return a form field that knows how to serialize Pydantic models.
         """
 
-        return super().formfield(
+        field: DjangoFormField | None = super().formfield(
             form_class=form_class or PydanticJSONFormField,
             choices_form_class=choices_form_class,
             **kwargs,
         )
+        return field
 
 
 __all__ = [
