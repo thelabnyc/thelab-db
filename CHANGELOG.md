@@ -1,5 +1,14 @@
 # Changes
 
+## v0.8.2 (2026-08-28)
+
+### Fix
+
+- **pgviews**: detect existing materialized views in create_view
+- **deps**: update dependency cryptography to >=50.0.0
+- **deps**: update dependency cryptography to >=49.0.0
+- **deps**: update dependency cryptography to >=48.0.1
+
 ## v0.8.1 (2026-05-21)
 
 ### Fix
