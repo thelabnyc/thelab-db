@@ -34,7 +34,7 @@ dev = [
     "coverage (==7.15.4)",
     "tox (>=4.60.1)",
     "psycopg[binary] (==3.3.4)",
-    "mypy (==1.20.2)",
+    "mypy (==2.3.1)",
     "django-stubs (==6.0.4)",
     "types-cryptography (>=3.3.23.2,<4)",
     "types-psycopg2 (>=2.9.21.20260724,<3)",
