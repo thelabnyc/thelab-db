@@ -92,6 +92,24 @@ def realize_deferred_projections(
 models.signals.class_prepared.connect(realize_deferred_projections)
 
 
+_RELKIND_LABELS = {
+    "r": "table",
+    "p": "partitioned table",
+    "v": "view",
+    "m": "materialized view",
+    "f": "foreign table",
+    "S": "sequence",
+    "i": "index",
+    "I": "partitioned index",
+    "c": "composite type",
+    "t": "TOAST table",
+}
+
+
+def _relkind_label(relkind: str) -> str:
+    return _RELKIND_LABELS.get(relkind, f"relation of kind {relkind!r}")
+
+
 @transaction.atomic()
 def create_view(
     connection: BaseDatabaseWrapper,
@@ -112,39 +130,50 @@ def create_view(
     existing view's schema is incompatible with the new definition, ``force``
     (default: False) controls whether or not to drop the old view and create
     the new one.
-    """
 
-    if "." in view_name:
-        vschema, vname = view_name.split(".", 1)
-    else:
-        vschema, vname = "public", view_name
+    Raises ``ValueError`` if a relation of that name already exists but is not
+    the kind being created -- converting between a view and a materialized view
+    needs a deliberate manual drop rather than a silent one.
+    """
 
     cursor_wrapper = connection.cursor()
     cursor = cursor_wrapper.cursor
     try:
         force_required = False
-        # Determine if view already exists.
+        # `to_regclass()` resolves the name exactly as the DDL below does, so
+        # the probe honors `search_path` and schema-qualified names without
+        # guessing at a schema. `relkind` is what separates a plain view ('v')
+        # from a materialized one ('m'): materialized views are not in the SQL
+        # standard and never appear in `information_schema.views`, so probing
+        # that catalog reports every existing one as missing and drops and
+        # recreates it on every sync.
         cursor.execute(
-            "SELECT COUNT(*) FROM information_schema.views WHERE table_schema = %s and table_name = %s;",
-            [vschema, vname],
+            "SELECT relkind FROM pg_class WHERE oid = to_regclass(%s);",
+            [view_name],
         )
-        view_exists = cursor.fetchone()[0] > 0
+        row = cursor.fetchone()
+        relkind: str | None = None if row is None else row[0]
+        expected_relkind = "m" if materialized else "v"
+        if relkind is not None and relkind != expected_relkind:
+            raise ValueError(
+                f"Cannot create {view_name} as a "
+                f"{_relkind_label(expected_relkind)}: a "
+                f"{_relkind_label(relkind)} of that name already exists. Drop "
+                f"it manually, then re-run the sync."
+            )
+        view_exists = relkind == expected_relkind
         if view_exists and not update:
             return "EXISTS"
-        elif view_exists:
+        elif view_exists and not materialized:
             # Detect schema conflict by copying the original view, attempting to
             # update this copy, and detecting errors.
             cursor.execute(
-                "CREATE TEMPORARY VIEW check_conflict AS SELECT * FROM {};".format(
-                    view_name
-                )
+                f"CREATE TEMPORARY VIEW check_conflict AS SELECT * FROM {view_name};"
             )
             try:
                 with transaction.atomic():
                     cursor.execute(
-                        "CREATE OR REPLACE TEMPORARY VIEW check_conflict AS {};".format(
-                            view_query
-                        )
+                        f"CREATE OR REPLACE TEMPORARY VIEW check_conflict AS {view_query};"
                     )
             except ProgrammingError:
                 force_required = True
@@ -158,9 +187,8 @@ def create_view(
             if index is not None:
                 index_sub_name = "_".join([s.strip() for s in index.split(",")])
                 cursor.execute(
-                    "CREATE UNIQUE INDEX {0}_{1}_index ON {0} ({2})".format(
-                        view_name, index_sub_name, index
-                    )
+                    f"CREATE UNIQUE INDEX {view_name}_{index_sub_name}_index"
+                    f" ON {view_name} ({index})"
                 )
             ret = view_exists and "UPDATED" or "CREATED"
         elif not force_required:
@@ -219,10 +247,10 @@ class ViewMeta(models.base.ModelBase):
             elif isinstance(field_name, str):
                 match = FIELD_SPEC_RE.match(field_name)
                 if not match:
-                    raise TypeError("Unrecognized field specifier: %r" % field_name)
+                    raise TypeError(f"Unrecognized field specifier: {field_name!r}")
                 deferred_projections.append(match.groups())
             else:
-                raise TypeError("Unrecognized field specifier: %r" % field_name)
+                raise TypeError(f"Unrecognized field specifier: {field_name!r}")
 
         view_cls = cast(
             type[models.Model],
@@ -230,9 +258,9 @@ class ViewMeta(models.base.ModelBase):
         )
 
         # Get dependencies
-        setattr(view_cls, "_dependencies", dependencies)
+        view_cls._dependencies = dependencies  # type: ignore[attr-defined]
         # Materialized views can have an index allowing concurrent refresh
-        setattr(view_cls, "_concurrent_index", concurrent_index)
+        view_cls._concurrent_index = concurrent_index  # type: ignore[attr-defined]
         for app_label, model_name, field_name in deferred_projections:
             model_spec = (app_label, model_name.lower())
 
@@ -255,7 +283,7 @@ class View(models.Model, metaclass=ViewMeta):
     """Helper for exposing Postgres views as Django models."""
 
     _dependencies: list[str]
-    _concurrent_index: str
+    _concurrent_index: str | None
     _deferred: bool = False
     sql: str
 
@@ -341,9 +369,7 @@ class MaterializedView(View):
         try:
             if self._concurrent_index is not None and concurrently:
                 cursor.execute(
-                    "REFRESH MATERIALIZED VIEW CONCURRENTLY {}".format(
-                        self._meta.db_table
-                    )
+                    f"REFRESH MATERIALIZED VIEW CONCURRENTLY {self._meta.db_table}"
                 )
             else:
                 cursor.execute(f"REFRESH MATERIALIZED VIEW {self._meta.db_table}")
