@@ -1,5 +1,13 @@
 # Changes
 
+## v0.8.3 (2026-08-31)
+
+### Fix
+
+- **fields**: return aware datetimes from EncryptedDateTimeField
+- **deps**: update dependency pydantic to >=2.13.5,<3
+- **deps**: update dependency cryptography to >=50.0.1
+
 ## v0.8.2 (2026-08-28)
 
 ### Fix
