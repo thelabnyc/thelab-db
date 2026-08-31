@@ -18,6 +18,10 @@ INSTALLED_APPS = [
 
 SECRET_KEY = "secret"
 
+# Pin this rather than inheriting it; the default flipped in Django 5.0 and
+# the tox matrix straddles that change.
+USE_TZ = True
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

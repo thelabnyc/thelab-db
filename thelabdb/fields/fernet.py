@@ -7,6 +7,7 @@ from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.db import models
 from django.db.backends.base.base import BaseDatabaseWrapper
 from django.db.models.expressions import Col
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.functional import cached_property
 
@@ -90,12 +91,10 @@ class EncryptedField(models.Field[_ST_contra, _GT_co]):
         expression: Col,
         connection: BaseDatabaseWrapper,
         *args: Any,
-    ) -> str | int | None:
+    ) -> Any:
         if value is not None:
             value = bytes(value)
-            return self.to_python(  # type:ignore[no-any-return]
-                force_str(self.fernet.decrypt(value))
-            )
+            return self.to_python(force_str(self.fernet.decrypt(value)))
         return None
 
     @cached_property
@@ -206,6 +205,20 @@ class EncryptedDateTimeField(
     Fernet encrypted version of Django's built-in
     [DateTimeField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateTimeField).
     """
+
+    def from_db_value(
+        self,
+        value: bytes | None,
+        expression: Col,
+        connection: BaseDatabaseWrapper,
+        *args: Any,
+    ) -> Any:
+        dt = super().from_db_value(value, expression, connection, *args)
+        # Encrypted columns are BinaryField as far as the backend is concerned,
+        # so the backend's own datetime converter never runs on them.
+        if dt is not None and settings.USE_TZ and timezone.is_naive(dt):
+            dt = timezone.make_aware(dt, connection.timezone)
+        return dt
 
 
 __all__ = [
