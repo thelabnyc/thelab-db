@@ -16,7 +16,7 @@ class UppercaseCharFieldTest(TestCase):
         self.assertEqual(obj.value, "FOO")
         # Check actual DB representation
         with connection.cursor() as cur:
-            cur.execute("SELECT value FROM %s" % models.UppercaseChar._meta.db_table)
+            cur.execute(f"SELECT value FROM {models.UppercaseChar._meta.db_table}")
             rows = [r[0] for r in cur.fetchall()]
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0], "FOO")
@@ -35,7 +35,7 @@ class NullCharFieldTest(TestCase):
         self.assertEqual(obj.value, "foo")
         # Check actual DB representation
         with connection.cursor() as cur:
-            cur.execute("SELECT value FROM %s" % models.NullChar._meta.db_table)
+            cur.execute(f"SELECT value FROM {models.NullChar._meta.db_table}")
             rows = [r[0] for r in cur.fetchall()]
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0], "foo")
@@ -46,7 +46,7 @@ class NullCharFieldTest(TestCase):
         self.assertEqual(obj.value, "")
         # Check actual DB representation
         with connection.cursor() as cur:
-            cur.execute("SELECT value FROM %s" % models.NullChar._meta.db_table)
+            cur.execute(f"SELECT value FROM {models.NullChar._meta.db_table}")
             rows = [r[0] for r in cur.fetchall()]
         self.assertEqual(len(rows), 1)
         self.assertIsNone(rows[0])

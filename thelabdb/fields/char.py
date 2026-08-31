@@ -4,16 +4,16 @@ from typing import Any, Self, TypeVar
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db import models
 
-_ST = TypeVar("_ST", contravariant=True)
-_GT = TypeVar("_GT", covariant=True)
+_ST_contra = TypeVar("_ST_contra", contravariant=True)
+_GT_co = TypeVar("_GT_co", covariant=True)
 
 
-class Creator[_ST, _GT]:
+class Creator[ST, GT]:
     """
     A placeholder class that provides a way to set the attribute on the model.
     """
 
-    def __init__(self, field: models.Field[_ST, _GT]):
+    def __init__(self, field: models.Field[ST, GT]):
         self.field = field
 
     def __get__(
@@ -33,7 +33,7 @@ class Creator[_ST, _GT]:
         obj.__dict__[self.field.name] = self.field.to_python(value)
 
 
-class UppercaseCharField(models.CharField[_ST, _GT]):
+class UppercaseCharField(models.CharField[_ST_contra, _GT_co]):
     """
     A simple subclass of `django.db.models.fields.CharField` that
     restricts all text to be uppercase.
@@ -60,7 +60,7 @@ class UppercaseCharField(models.CharField[_ST, _GT]):
         raise ValidationError(f"Cannot assign {val} to {self.__class__}")
 
 
-class NullCharField(models.CharField[_ST, _GT]):
+class NullCharField(models.CharField[_ST_contra, _GT_co]):
     """
     CharField that stores '' as None and returns None as ''
     Useful when using unique=True and forms. Implies null==blank==True.

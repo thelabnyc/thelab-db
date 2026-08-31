@@ -37,7 +37,7 @@ def _validate[T: pydantic.BaseModel](
     value: str | bytes | dict[str, Any],
 ) -> Result[T, pydantic_core.ValidationError]:
     try:
-        if isinstance(value, str) or isinstance(value, bytes):
+        if isinstance(value, str | bytes):
             return Ok(model_cls.model_validate_json(value))
         return Ok(model_cls.model_validate(value))
     except pydantic_core.ValidationError as e:

@@ -23,7 +23,7 @@ class NonQuotingQuery(query.Query):
             connection = connections[using]
 
         conn = cast(BaseDatabaseWrapper, connection)
-        for alias, annotation in self.annotation_select.items():
+        for annotation in self.annotation_select.values():
             conn.ops.check_expression_support(annotation)
 
         return compiler.NonQuotingCompiler(self, conn, using)

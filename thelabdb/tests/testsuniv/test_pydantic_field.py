@@ -41,7 +41,7 @@ class PydanticFieldTest(TestCase):
         """
         Product._default_manager.create(attrs=self.valid_attrs)
         with connection.cursor() as cur:
-            cur.execute("SELECT attrs FROM %s" % Product._meta.db_table)
+            cur.execute(f"SELECT attrs FROM {Product._meta.db_table}")
             rows = [r[0] for r in cur.fetchall()]
         self.assertEqual(len(rows), 1)
         self.assertJSONEqual(rows[0], self.valid_attrs_dict)

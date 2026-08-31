@@ -14,11 +14,11 @@ from . import hkdf
 
 Validator = Callable[[str | None], None]
 
-_ST = TypeVar("_ST", contravariant=True)
-_GT = TypeVar("_GT", covariant=True)
+_ST_contra = TypeVar("_ST_contra", contravariant=True)
+_GT_co = TypeVar("_GT_co", covariant=True)
 
 
-class EncryptedField(models.Field[_ST, _GT]):
+class EncryptedField(models.Field[_ST_contra, _GT_co]):
     """
     A field that encrypts values using Fernet symmetric encryption. Designed to
     be used as a class mixin, along with another built-in field type.
@@ -39,15 +39,15 @@ class EncryptedField(models.Field[_ST, _GT]):
     def __init__(self, *args: Any, **kwargs: Any):
         if kwargs.get("primary_key"):
             raise ImproperlyConfigured(
-                "%s does not support primary_key=True." % self.__class__.__name__
+                f"{self.__class__.__name__} does not support primary_key=True."
             )
         if kwargs.get("unique"):
             raise ImproperlyConfigured(
-                "%s does not support unique=True." % self.__class__.__name__
+                f"{self.__class__.__name__} does not support unique=True."
             )
         if kwargs.get("db_index"):
             raise ImproperlyConfigured(
-                "%s does not support db_index=True." % self.__class__.__name__
+                f"{self.__class__.__name__} does not support db_index=True."
             )
         super().__init__(*args, **kwargs)
 
@@ -112,12 +112,10 @@ class EncryptedField(models.Field[_ST, _GT]):
             del self.__dict__["_internal_type"]
 
 
-def get_prep_lookup[_T](self: models.Lookup[_T]) -> Any:
+def get_prep_lookup[T](self: models.Lookup[T]) -> Any:
     """Raise errors for unsupported lookups"""
     raise FieldError(
-        "{} '{}' does not support lookups".format(
-            self.lhs.field.__class__.__name__, self.lookup_name
-        )
+        f"{self.lhs.field.__class__.__name__} '{self.lookup_name}' does not support lookups"
     )
 
 
@@ -136,44 +134,38 @@ for name, lookup in models.Field.class_lookups.items():
 
 
 class EncryptedTextField(
-    EncryptedField[_ST, _GT],
-    models.TextField[_ST, _GT],
+    EncryptedField[_ST_contra, _GT_co],
+    models.TextField[_ST_contra, _GT_co],
 ):
     """
     Fernet encrypted version of Django's built-in
     [TextField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.TextField).
     """
 
-    pass
-
 
 class EncryptedCharField(
-    EncryptedField[_ST, _GT],
-    models.CharField[_ST, _GT],
+    EncryptedField[_ST_contra, _GT_co],
+    models.CharField[_ST_contra, _GT_co],
 ):
     """
     Fernet encrypted version of Django's built-in
     [CharField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.CharField).
     """
 
-    pass
-
 
 class EncryptedEmailField(
-    EncryptedField[_ST, _GT],
-    models.EmailField[_ST, _GT],
+    EncryptedField[_ST_contra, _GT_co],
+    models.EmailField[_ST_contra, _GT_co],
 ):
     """
     Fernet encrypted version of Django's built-in
     [EmailField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.EmailField).
     """
 
-    pass
-
 
 class EncryptedIntegerField(
-    EncryptedField[_ST, _GT],
-    models.IntegerField[_ST, _GT],
+    EncryptedField[_ST_contra, _GT_co],
+    models.IntegerField[_ST_contra, _GT_co],
 ):
     """
     Fernet encrypted version of Django's built-in
@@ -197,35 +189,31 @@ class EncryptedIntegerField(
 
 
 class EncryptedDateField(
-    EncryptedField[_ST, _GT],
-    models.DateField[_ST, _GT],
+    EncryptedField[_ST_contra, _GT_co],
+    models.DateField[_ST_contra, _GT_co],
 ):
     """
     Fernet encrypted version of Django's built-in
     [DateField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateField).
     """
 
-    pass
-
 
 class EncryptedDateTimeField(
-    EncryptedField[_ST, _GT],
-    models.DateTimeField[_ST, _GT],
+    EncryptedField[_ST_contra, _GT_co],
+    models.DateTimeField[_ST_contra, _GT_co],
 ):
     """
     Fernet encrypted version of Django's built-in
     [DateTimeField](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateTimeField).
     """
 
-    pass
-
 
 __all__ = [
-    "EncryptedField",
-    "EncryptedTextField",
     "EncryptedCharField",
-    "EncryptedEmailField",
-    "EncryptedIntegerField",
     "EncryptedDateField",
     "EncryptedDateTimeField",
+    "EncryptedEmailField",
+    "EncryptedField",
+    "EncryptedIntegerField",
+    "EncryptedTextField",
 ]

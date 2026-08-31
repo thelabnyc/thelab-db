@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import cast
+from typing import ClassVar, cast
 
 from cryptography.fernet import Fernet
 from django.conf import settings
@@ -47,14 +47,16 @@ class EncryptedFieldTest(TestCase):
 
     def test_not_allowed(self) -> None:
         for param in ["primary_key", "db_index", "unique"]:
-            with self.subTest(param=param):
-                with self.assertRaises(ImproperlyConfigured):
-                    thelabdb.fields.EncryptedIntegerField(**{param: True})
+            with (
+                self.subTest(param=param),
+                self.assertRaises(ImproperlyConfigured),
+            ):
+                thelabdb.fields.EncryptedIntegerField(**{param: True})
 
     def test_get_integer_field_validators(self) -> None:
         f = thelabdb.fields.EncryptedIntegerField[int, int]()
         # Raises no error
-        f.validators
+        self.assertIsNotNone(f.validators)
 
     def test_nullable(self) -> None:
         """Encrypted/dual/hash field can be nullable."""
@@ -81,7 +83,7 @@ class EncryptedFieldTest(TestCase):
 
 class EncryptedTextQueryTest(TestCase):
     model = models.EncryptedText
-    values = ["foo", "bar"]
+    values: ClassVar[list[str]] = ["foo", "bar"]
 
     def test_insert(self) -> None:
         """Data stored in DB is actually encrypted."""
@@ -91,7 +93,7 @@ class EncryptedTextQueryTest(TestCase):
         )
         self.model._default_manager.create(value=self.values[0])
         with connection.cursor() as cur:
-            cur.execute("SELECT value FROM %s" % self.model._meta.db_table)
+            cur.execute(f"SELECT value FROM {self.model._meta.db_table}")
             data = [
                 force_str(field.fernet.decrypt(force_bytes(r[0])))
                 for r in cur.fetchall()
@@ -131,24 +133,27 @@ class EncryptedTextQueryTest(TestCase):
 
 class EncryptedCharQueryTest(TestCase):
     model = models.EncryptedChar
-    values = ["one", "two"]
+    values: ClassVar[list[str]] = ["one", "two"]
 
 
 class EncryptedEmailQueryTest(TestCase):
     model = models.EncryptedEmail
-    values = ["a@example.com", "b@example.com"]
+    values: ClassVar[list[str]] = ["a@example.com", "b@example.com"]
 
 
 class EncryptedIntQueryTest(TestCase):
     model = models.EncryptedInt
-    values = [1, 2]
+    values: ClassVar[list[int]] = [1, 2]
 
 
 class EncryptedDateQueryTest(TestCase):
     model = models.EncryptedDate
-    values = [date(2015, 2, 5), date(2015, 2, 8)]
+    values: ClassVar[list[date]] = [date(2015, 2, 5), date(2015, 2, 8)]
 
 
 class EncryptedDateTimeQueryTest(TestCase):
     model = models.EncryptedDateTime
-    values = [datetime(2015, 2, 5, 15), datetime(2015, 2, 8, 16)]
+    values: ClassVar[list[datetime]] = [
+        datetime(2015, 2, 5, 15),  # noqa: DTZ001
+        datetime(2015, 2, 8, 16),  # noqa: DTZ001
+    ]

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from enum import IntEnum, StrEnum
 from typing import NewType, TypeVar
@@ -46,28 +46,27 @@ class EncryptedNullable(models.Model):
     value = thelabdb.fields.EncryptedIntegerField(null=True)
 
 
-_T = TypeVar("_T")
-_ST = TypeVar("_ST", contravariant=True)
-_GT = TypeVar("_GT", covariant=True)
+_ST_contra = TypeVar("_ST_contra", contravariant=True)
+_GT_co = TypeVar("_GT_co", covariant=True)
 
 StoreID = NewType("StoreID", int)
 Rating = NewType("Rating", int)
 ProductQty = NewType("ProductQty", int)
 
 
-class StoreIDAutoField(models.AutoField[_ST, _GT]):
+class StoreIDAutoField(models.AutoField[_ST_contra, _GT_co]):
     _pyi_private_set_type: StoreID
     _pyi_private_get_type: StoreID
     _pyi_lookup_exact_type: StoreID
 
 
-class RatingField(models.SmallIntegerField[_ST, _GT]):
+class RatingField(models.SmallIntegerField[_ST_contra, _GT_co]):
     _pyi_private_set_type: Rating
     _pyi_private_get_type: Rating
     _pyi_lookup_exact_type: Rating
 
 
-class ProductQtyField(models.IntegerField[_ST, _GT]):
+class ProductQtyField(models.IntegerField[_ST_contra, _GT_co]):
     _pyi_private_set_type: ProductQty
     _pyi_private_get_type: ProductQty
     _pyi_lookup_exact_type: ProductQty
@@ -99,7 +98,7 @@ class ProductAttributes(pydantic.BaseModel):
     color: Color
     size: Size
     first_available_dt: datetime = pydantic.Field(
-        default_factory=lambda: datetime.now(tz=timezone.utc)
+        default_factory=lambda: datetime.now(tz=UTC)
     )
     discontinued_dt: datetime | None = None
 

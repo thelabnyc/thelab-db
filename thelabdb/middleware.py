@@ -116,10 +116,7 @@ class AtomicMutatingRequestsMiddleware:
             if not db.in_atomic_block:
                 continue
             # If ATOMIC_REQUESTS is enabled, use original DRF behavior
-            if db.settings_dict["ATOMIC_REQUESTS"]:
-                db.set_rollback(True)
-            # Otherwise, only mark rollback for mutating requests on managed databases
-            elif (
+            if db.settings_dict["ATOMIC_REQUESTS"] or (
                 db.alias in managed_databases
                 and request is not None
                 and request.method not in cls.safe_http_methods
