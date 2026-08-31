@@ -1,5 +1,5 @@
-from datetime import date, datetime
-from typing import ClassVar, cast
+from datetime import UTC, date, datetime
+from typing import Any, ClassVar, cast
 
 from cryptography.fernet import Fernet
 from django.conf import settings
@@ -7,6 +7,7 @@ from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.db import connection
 from django.db import models as dj_models
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 
 import thelabdb.fields
@@ -82,8 +83,12 @@ class EncryptedFieldTest(TestCase):
 
 
 class EncryptedTextQueryTest(TestCase):
-    model = models.EncryptedText
-    values: ClassVar[list[str]] = ["foo", "bar"]
+    model: ClassVar[type[Any]] = models.EncryptedText
+    values: ClassVar[tuple[Any, ...]] = ("foo", "bar")
+
+    def decode(self, plaintext: str) -> Any:
+        """Turn a decrypted column value back into the Python value it came from."""
+        return self.model._meta.get_field("value").to_python(plaintext)
 
     def test_insert(self) -> None:
         """Data stored in DB is actually encrypted."""
@@ -99,7 +104,7 @@ class EncryptedTextQueryTest(TestCase):
                 for r in cur.fetchall()
             ]
 
-        self.assertEqual(list(map(field.to_python, data)), [self.values[0]])
+        self.assertEqual([self.decode(d) for d in data], [self.values[0]])
 
     def test_insert_and_select(self) -> None:
         """Data round-trips through insert and select."""
@@ -131,29 +136,35 @@ class EncryptedTextQueryTest(TestCase):
             self.assertIn("does not support lookups", str(exc))
 
 
-class EncryptedCharQueryTest(TestCase):
+class EncryptedCharQueryTest(EncryptedTextQueryTest):
     model = models.EncryptedChar
-    values: ClassVar[list[str]] = ["one", "two"]
+    values = ("one", "two")
 
 
-class EncryptedEmailQueryTest(TestCase):
+class EncryptedEmailQueryTest(EncryptedTextQueryTest):
     model = models.EncryptedEmail
-    values: ClassVar[list[str]] = ["a@example.com", "b@example.com"]
+    values = ("a@example.com", "b@example.com")
 
 
-class EncryptedIntQueryTest(TestCase):
+class EncryptedIntQueryTest(EncryptedTextQueryTest):
     model = models.EncryptedInt
-    values: ClassVar[list[int]] = [1, 2]
+    values = (1, 2)
 
 
-class EncryptedDateQueryTest(TestCase):
+class EncryptedDateQueryTest(EncryptedTextQueryTest):
     model = models.EncryptedDate
-    values: ClassVar[list[date]] = [date(2015, 2, 5), date(2015, 2, 8)]
+    values = (date(2015, 2, 5), date(2015, 2, 8))
 
 
-class EncryptedDateTimeQueryTest(TestCase):
+class EncryptedDateTimeQueryTest(EncryptedTextQueryTest):
     model = models.EncryptedDateTime
-    values: ClassVar[list[datetime]] = [
-        datetime(2015, 2, 5, 15),  # noqa: DTZ001
-        datetime(2015, 2, 8, 16),  # noqa: DTZ001
-    ]
+    values = (
+        datetime(2015, 2, 5, 15, tzinfo=UTC),
+        datetime(2015, 2, 8, 16, tzinfo=UTC),
+    )
+
+    def decode(self, plaintext: str) -> Any:
+        # SQLite stores the UTC wall clock with no offset, so the plaintext is
+        # naive there and already aware on Postgres.
+        dt = super().decode(plaintext)
+        return dt if timezone.is_aware(dt) else timezone.make_aware(dt, UTC)
