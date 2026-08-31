@@ -27,7 +27,7 @@ class ViewSyncer:
             backlog = self.run_backlog(backlog, force, update, connection)
 
         if loop >= 10:
-            logger.warn(
+            logger.warning(
                 "pgviews dependencies hit limit. Check if your model dependencies are correct"
             )
         else:

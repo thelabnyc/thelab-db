@@ -24,7 +24,6 @@ class Command(BaseCommand):
     )
 
     def handle(self, **options: Any) -> None:
-        """ """
         for view_cls in get_view_classes():
             python_name = f"{view_cls._meta.app_label}.{view_cls.__name__}"
             status = clear_view(
@@ -36,11 +35,4 @@ class Command(BaseCommand):
                 msg = "dropped"
             else:
                 msg = "not dropped"
-            logger.info(
-                "%(python_name)s (%(view_name)s): %(msg)s"
-                % {
-                    "python_name": python_name,
-                    "view_name": view_cls._meta.db_table,
-                    "msg": msg,
-                }
-            )
+            logger.info("%s (%s): %s", python_name, view_cls._meta.db_table, msg)

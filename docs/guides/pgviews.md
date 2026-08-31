@@ -25,17 +25,22 @@ class Customer(models.Model):
     is_preferred = models.BooleanField(default=False)
 
     class Meta:
-        app_label = 'myapp'
+        app_label = "myapp"
+
 
 class PreferredCustomer(pg.View):
-    projection = ['myapp.Customer.*',]
-    dependencies = ['myapp.OtherView',]
+    projection = [
+        "myapp.Customer.*",
+    ]
+    dependencies = [
+        "myapp.OtherView",
+    ]
     sql = """SELECT * FROM myapp_customer WHERE is_preferred = TRUE;"""
 
     class Meta:
-      app_label = 'myapp'
-      db_table = 'myapp_preferredcustomer'
-      managed = False
+        app_label = "myapp"
+        db_table = "myapp_preferredcustomer"
+        managed = False
 ```
 
 The SQL produced by this might look like:
@@ -98,8 +103,8 @@ class PreferredCustomer(pg.View):
     sql = VIEW_SQL
 
     class Meta:
-      managed = False
-      db_table = 'my_sql_view'
+        managed = False
+        db_table = "my_sql_view"
 ```
 
 ### Define Projection
@@ -112,12 +117,14 @@ from thelabdb.pgviews import view as pg
 
 
 class PreferredCustomer(pg.View):
-    projection = ['myapp.Customer.*',]
+    projection = [
+        "myapp.Customer.*",
+    ]
     sql = """SELECT * FROM myapp_customer WHERE is_preferred = TRUE;"""
 
     class Meta:
-      db_table = 'my_sql_view'
-      managed = False
+        db_table = "my_sql_view"
+        managed = False
 ```
 
 This will take all fields on `myapp.Customer` and apply them to
@@ -178,14 +185,17 @@ Example:
 ```py
 from thelabdb.pgviews import view as pg
 
+
 class PreferredCustomer(pg.View):
-    dependencies = ['myapp.OtherView',]
+    dependencies = [
+        "myapp.OtherView",
+    ]
     sql = """SELECT * FROM myapp_customer WHERE is_preferred = TRUE;"""
 
     class Meta:
-      app_label = 'myapp'
-      db_table = 'myapp_preferredcustomer'
-      managed = False
+        app_label = "myapp"
+        db_table = "myapp_preferredcustomer"
+        managed = False
 ```
 
 ### Materialized Views
@@ -208,6 +218,7 @@ from thelabdb.pgviews import view as pg
 VIEW_SQL = """
     SELECT name, post_code FROM myapp_customer WHERE is_preferred = TRUE
 """
+
 
 class Customer(models.Model):
     name = models.CharField(max_length=100)
@@ -245,8 +256,9 @@ VIEW_SQL = """
     SELECT id, name, post_code FROM myapp_customer WHERE is_preferred = TRUE
 """
 
+
 class PreferredCustomer(pg.MaterializedView):
-    concurrent_index = 'id, post_code'
+    concurrent_index = "id, post_code"
     sql = VIEW_SQL
 
     name = models.CharField(max_length=100)
@@ -271,8 +283,8 @@ class PreferredCustomer(pg.View):
     sql = """SELECT * FROM myapp_customer WHERE is_preferred = TRUE;"""
 
     class Meta:
-      db_table = 'my_custom_schema.preferredcustomer'
-      managed = False
+        db_table = "my_custom_schema.preferredcustomer"
+        managed = False
 ```
 
 ### Sync Listeners

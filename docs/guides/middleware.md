@@ -22,7 +22,7 @@ Add the middleware to your Django settings:
 ```python
 MIDDLEWARE = [
     # ... other middleware
-    'thelabdb.middleware.AtomicMutatingRequestsMiddleware',
+    "thelabdb.middleware.AtomicMutatingRequestsMiddleware",
     # ... other middleware
 ]
 ```
@@ -54,7 +54,7 @@ Then use your custom middleware in settings:
 ```python
 MIDDLEWARE = [
     # ... other middleware
-    'myapp.middleware.CustomAtomicMiddleware',
+    "myapp.middleware.CustomAtomicMiddleware",
     # ... other middleware
 ]
 ```
@@ -109,7 +109,9 @@ from rest_framework.response import Response
 from thelabdb.middleware import AtomicMutatingRequestsMiddleware
 
 
-def exception_handler(exc: Exception, context: dict[str, Any] | None) -> Response | None:
+def exception_handler(
+    exc: Exception, context: dict[str, Any] | None
+) -> Response | None:
     """DRF exception handler that ensures transaction rollback.
 
     This handler must be used when combining AtomicMutatingRequestsMiddleware
@@ -151,7 +153,7 @@ Then configure DRF to use your custom exception handler in `settings.py`:
 
 ```python
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'myapp.exceptions.exception_handler',
+    "EXCEPTION_HANDLER": "myapp.exceptions.exception_handler",
 }
 ```
 

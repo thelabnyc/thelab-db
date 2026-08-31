@@ -42,6 +42,7 @@ To create an encrypted version of some other custom field class, inherit from bo
 from thelabdb.fields.fernet import EncryptedField
 from somewhere import MyField
 
+
 class MyEncryptedField(EncryptedField, MyField):
     pass
 ```
@@ -69,8 +70,8 @@ keys will still be accessible:
 
 ```py
 FERNET_KEYS = [
-    'new key for encrypting',
-    'older key for decrypting old data',
+    "new key for encrypting",
+    "older key for decrypting old data",
 ]
 ```
 

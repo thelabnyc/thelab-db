@@ -19,7 +19,7 @@ SECRET_KEY = "secret"
 if not apps.ready and not settings.configured:
     django.setup()
 
-import django_stubs_ext  # NOQA
+import django_stubs_ext
 
 django_stubs_ext.monkeypatch()
 
