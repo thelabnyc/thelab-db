@@ -33,7 +33,7 @@ dev = [
     "ruff (>=0.16.5)",
     "coverage (==7.16.0)",
     "tox (>=4.61.2)",
-    "psycopg[binary] (==3.3.4)",
+    "psycopg[binary] (==3.3.5)",
     "mypy (==2.3.1)",
     "django-stubs (==6.0.4)",
     "types-cryptography (>=3.3.23.2,<4)",
