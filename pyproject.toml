@@ -30,7 +30,7 @@ Documentation = "https://thelabnyc.gitlab.io/thelab-db"
 
 [dependency-groups]
 dev = [
-    "ruff (>=0.16.7)",
+    "ruff (>=0.16.8)",
     "coverage (==7.16.1)",
     "tox (>=4.61.4)",
     "psycopg[binary] (==3.3.5)",
