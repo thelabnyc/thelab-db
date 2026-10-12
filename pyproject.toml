@@ -11,7 +11,7 @@ dependencies = [
     "Django (>=5.2)",
     "cryptography (>=50.0.2)",
     "django-stubs-ext (>=5.2.9,<7)",
-    "pydantic (>=2.13.5,<3)",
+    "pydantic (>=2.14.0,<3)",
     "thelab-typing (>=1.0.2,<2.0.0)",
 ]
 requires-python = ">=3.13"
