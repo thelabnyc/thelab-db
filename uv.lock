@@ -1434,7 +1434,7 @@ dev = [
     { name = "psycopg", extras = ["binary"], specifier = "==3.3.6" },
     { name = "pymdown-extensions", specifier = ">=11.0.2,<12" },
     { name = "ruff", specifier = ">=0.17.1" },
-    { name = "tox", specifier = ">=4.67.0" },
+    { name = "tox", specifier = ">=4.67.1" },
     { name = "tox-uv", specifier = ">=1.37.0" },
     { name = "types-cryptography", specifier = ">=3.3.23.2,<4" },
     { name = "types-psycopg2", specifier = ">=2.9.21.20261008,<3" },
