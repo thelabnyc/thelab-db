@@ -29,9 +29,3 @@ Now you're ready to start using thelabdb.
 ## Next Steps
 
 {nav}
-
-<style type="text/css">
-.autodoc { display: none; }
-</style>
-
-::: thelabdb.tests.settings.docgen_setup.setup
