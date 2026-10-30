@@ -5,8 +5,6 @@ which views need to be dropped before migrations run. Views are then recreated
 by the post_migrate signal handler in apps.py.
 """
 
-from __future__ import annotations
-
 from collections.abc import Sequence
 from typing import NewType
 import logging
