@@ -1,5 +1,22 @@
 # Changes
 
+## v0.9.0 (2026-10-30)
+
+### Feat
+
+- test Django 6.0 and 6.1, drop Django 4.2 and 5.1
+- support Python 3.15 and drop Python 3.13
+
+### Fix
+
+- **deps**: update dependency pydantic to >=2.14.1,<3
+- **deps**: update dependency pydantic to >=2.14.0,<3
+- **deps**: update dependency cryptography to >=50.0.2
+
+### Refactor
+
+- adopt Python 3.14 syntax
+
 ## v0.8.3 (2026-08-31)
 
 ### Fix
