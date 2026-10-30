@@ -9,7 +9,7 @@ from django.db.models.fields.reverse_related import ForeignObjectRel
 def get_fields_by_name(
     model_cls: type[models.Model],
     *field_names: str,
-) -> "dict[str, Field[Any, Any] | GenericForeignKey]":
+) -> dict[str, Field[Any, Any] | GenericForeignKey]:
     """Return a dict of `models.Field` instances for named fields.
 
     Supports wildcard fetches using `'*'`.
