@@ -78,4 +78,4 @@ make docs_build
 - Strict mypy type checking is enforced (see `pyproject.toml` for config)
 - All code must be type-hinted
 - Pre-commit (`prek`) hooks validate commits (ruff, isort, pyupgrade, django-upgrade, commitizen)
-- Python 3.13+ syntax required
+- Python 3.14+ syntax required
