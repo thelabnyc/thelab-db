@@ -32,7 +32,7 @@ Documentation = "https://thelabnyc.gitlab.io/thelab-db"
 dev = [
     "ruff (>=0.17.3)",
     "coverage (==7.17.0)",
-    "tox (>=4.67.2)",
+    "tox (>=4.67.4)",
     "psycopg[binary] (==3.3.6)",
     "mypy (==2.4.0)",
     "django-stubs (==6.1.2)",
