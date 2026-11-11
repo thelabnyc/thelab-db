@@ -39,7 +39,7 @@ dev = [
     "types-cryptography (>=3.3.23.2,<4)",
     "types-psycopg2 (>=2.9.21.20261030,<3)",
     "tox-uv (>=1.37.7)",
-    "pymdown-extensions (>=12.3,<13)",
+    "pymdown-extensions (>=13.0,<14)",
     "mkautodoc (>=0.2.0,<0.3)",
     "zensical (>=0.1.0,<0.1.1)",
 ]
