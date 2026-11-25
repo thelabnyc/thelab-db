@@ -969,7 +969,7 @@ dev = [
     { name = "tox", specifier = ">=4.67.15" },
     { name = "tox-uv", specifier = ">=1.37.9" },
     { name = "types-cryptography", specifier = ">=3.3.23.2,<4" },
-    { name = "types-psycopg2", specifier = ">=2.9.21.20261030,<3" },
+    { name = "types-psycopg2", specifier = ">=2.9.21.20261122,<3" },
     { name = "zensical", specifier = ">=0.1.2,<0.1.3" },
 ]
 
